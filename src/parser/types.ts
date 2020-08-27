@@ -5,6 +5,6 @@ export type UpdateContext = (prevType) => void;
 export interface IOperator {
   value: string;
   code: number;
-  tokenType: TokenType;
+  type: TokenType;
   calc: (left: number, right: number) => number;
 }

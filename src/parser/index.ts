@@ -1,6 +1,6 @@
 import {IOperator} from './types';
 import {TokenType, tokenContext as tc, tokenTypes as tt, TokenContext} from './tokens';
-import {isNumericStart, isNumericChar, Position} from './util';
+import {isNumericStart, isNumericChar, Position, Node} from './util';
 
 /**
  * 解析类
@@ -40,16 +40,70 @@ export default class Parser {
     this.endLoc = this.currPosition();
   }
 
-  parse(): void {
+  parse(): Node {
+    const node = this.startNode();
     this.next();
-    this.parseExpression();
+    node.expression = this.parseExpression();
+    return this.finishNode(node, 'Expression');
   }
 
-  parseExpression(): void {
+  parseExpression(): any {
+    const left = this.parseExprAtom(true);
+
+    if (this.type === tt.end) {
+      return left;
+    }
+    if (this.type.isOperator) {
+      return this.parseExprOp(left, 0, 0, -1);
+    }
+    this.raise(this.pos, '');
   }
 
-  parseRightValue(): void {
+  parseExprAtom(allowPrefix = false): any {
+    if (this.type === tt.parenL) {
+      this.next();
+      return this.parseExpression();
+    } else if (allowPrefix && (this.type === tt.plus || this.type === tt.minus)) {
+      return this.parsePrefixNumeric();
+    } else if (this.type === tt.numeric) {
+      const node = this.startNode();
+      node.value = this.value;
+      this.finishNode(node, 'NumericLiteral');
+      this.next();
+      return node;
+    }
+    this.raise(this.pos, `Unexpected token: ${this.value}`);
+  }
 
+  parseExprOp(left, leftStartPos, leftStartLoc, prevPriority): any {
+    const priority = this.type.priority;
+    if (this.type.isOperator && this.type.priority > prevPriority) {
+      const node = this.startNode();
+      const operator = this.value;
+      this.next();
+      const right = this.parseExprOp(this.parseExprAtom(), 0, 0, priority);
+      node.left = left;
+      node.operator = operator;
+      node.right = right;
+      this.finishNode(node, 'BinaryExpression');
+      return this.parseExprOp(node, 0, 0, prevPriority);
+    }
+    return left;
+  }
+
+  /**
+   *
+   */
+  parsePrefixNumeric(): Node {
+    const prefix = this.type.label;
+    if (!this.eat(tt.numeric)) {
+      this.raise(this.pos, `Unexpected token: ${this.value}`);
+    }
+    const node = this.startNode();
+    node.value = prefix + this.value;
+    this.finishNode(node, 'NumericLiteral');
+    this.next();
+    return node;
   }
 
   currPosition(): Position {
@@ -102,13 +156,13 @@ export default class Parser {
               lastChar = this.input[this.pos];
             }
           } else {
-            this.raise(this.pos, `Unexpected character \`${char}\``);
+            this.raise(this.pos, `Unexpected character ${char}`);
           }
         } else if (code === 46) { // .
           if (allowDot) {
             allowDot = false;
           } else {
-            this.raise(this.pos, `Unexpected character \`${char}\``);
+            this.raise(this.pos, `Unexpected character ${char}`);
           }
         }
         if (!lastChar && !allowE) allowE = true;
@@ -139,27 +193,27 @@ export default class Parser {
     switch (code) {
       case 40: // `(`
         this.pos++;
-        return this.finishToken(tt.parenL);
+        return this.finishToken(tt.parenL, '(');
       case 41: // `)`
         this.pos++;
-        return this.finishToken(tt.parenR);
+        return this.finishToken(tt.parenR, ')');
       case 42: // `*`
         this.pos++;
-        return this.finishToken(tt.times);
+        return this.finishToken(tt.times, '*');
       case 43: // `+`
         this.pos++;
-        return this.finishToken(tt.plus);
+        return this.finishToken(tt.plus, '+');
       case 45: // `-`
         this.pos++;
-        return this.finishToken(tt.minus);
+        return this.finishToken(tt.minus, '-');
       case 47: // `/`
         this.pos++;
-        return this.finishToken(tt.div);
+        return this.finishToken(tt.div, '/');
       default:
         const operator = Parser.operators.find(op => op.code === code);
         if (operator) {
           this.pos++;
-          return this.finishToken(operator.tokenType);
+          return this.finishToken(operator.type, operator.value);
         }
     }
     return this.raise(this.pos - 1, `Unexpected character \`${this.input[this.pos]}\``);
@@ -173,12 +227,25 @@ export default class Parser {
     return false;
   }
 
-  finishToken(tokenType: TokenType, value = ''): void {
+  currContext(): TokenContext {
+    return this.context[this.context.length - 1];
+  }
+
+  finishToken(type: TokenType, value = ''): void {
     const prevType = this.type;
-    this.type = tokenType;
+    this.end = this.pos;
+    this.endLoc = this.currPosition();
+    this.type = type;
     this.value = value;
+
     this.updateContext(prevType);
-    this.context.push(tokenType);
+  }
+
+  finishNode(node: Node, type: string): Node {
+    node.type = type;
+    node.end = this.end;
+    node.loc.end = this.endLoc;
+    return node;
   }
 
   skipSpace(): void {
@@ -199,8 +266,8 @@ export default class Parser {
     }
   }
 
-  startNode(): void {
-
+  startNode(): Node {
+    return new Node(this.start, this.startLoc);
   }
 
   raise(pos: number, message: string): void {
@@ -214,7 +281,7 @@ export default class Parser {
 
   updateContext(prevType?: TokenType): void {
     if (this.type.updateContext) {
-      this.type.updateContext(prevType);
+      this.type.updateContext.call(this, prevType);
     }
   }
 }

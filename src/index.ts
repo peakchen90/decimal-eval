@@ -1,5 +1,6 @@
 import Parser from './parser';
 import Operator from './operator';
+import {transform} from './transform';
 // import {minus, plus, times, div} from './operators';
 // Parser.use(plus);
 // Parser.use(minus);
@@ -7,8 +8,9 @@ import Operator from './operator';
 // Parser.use(div);
 
 function evaluate(expression: string): number {
-  new Parser(expression).parse();
-  return 0;
+  const ast = new Parser(expression).parse();
+  const value = transform(ast);
+  return Number(value);
 }
 
 export const DecimalEval = {

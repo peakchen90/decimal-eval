@@ -13,15 +13,19 @@ export class Node {
   start: number
   end: number
   loc: {
-    start: number;
-    end: number;
+    start: Position;
+    end: Position;
   }
+  [key: string]: any
 
-  constructor(pos: number, loc: { start: number; end: number }) {
+  constructor(start: number, startLoc: Position) {
     this.type = '';
-    this.start = pos;
-    this.end = pos;
-    this.loc = loc;
+    this.start = start;
+    this.end = start;
+    this.loc = {
+      start: startLoc,
+      end: startLoc
+    };
   }
 }
 

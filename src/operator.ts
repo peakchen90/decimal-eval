@@ -8,7 +8,7 @@ export default class Operator {
     calc: (left: number, right: number) => number
   ): IOperator {
     return {
-      tokenType: new TokenType(value, {
+      type: new TokenType(value, {
         isOperator: true,
         priority
       }),

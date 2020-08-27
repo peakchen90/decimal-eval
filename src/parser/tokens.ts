@@ -1,4 +1,5 @@
 import {UpdateContext} from './types';
+import Parser from './index';
 
 export interface ITokenTypeOptions {
   isOperator?: boolean;
@@ -41,3 +42,12 @@ export const tokenContext = {
   parenL: new TokenContext('('),
   parenR: new TokenContext(')'),
 };
+
+tokenTypes.parenL.updateContext = function (this: Parser): void {
+  this.context.push(tokenContext.parenL);
+};
+
+tokenTypes.parenR.updateContext = function (this: Parser): void {
+  this.context.pop();
+};
+
