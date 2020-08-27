@@ -1,0 +1,45 @@
+language: node_js
+
+os:
+  - linux
+
+node_js:
+  - "6"
+  - "8"
+  - "10"
+  - "12"
+
+install:
+  - npm install
+  - npm install -g codecov
+
+stages:
+  - test
+  - name: releaseNpm
+    if: branch = master
+  - name: ghPages
+    if: branch = master
+
+jobs:
+  include:
+    - stage: test
+      name: "Run test scripts"
+      node_js: "14"
+      script:
+        - npm run test
+        - codecov
+
+    - stage: releaseNpm
+      name: "Release npm package"
+      node_js: "14"
+      script: echo "Release npm package..."
+      deploy:
+        provider: npm
+        email: 1558267774@qq.com
+        api_key: "$NPM_TOKEN"
+        skip_cleanup: true
+        on:
+          branch: master
+
+notifications:
+  email: false
