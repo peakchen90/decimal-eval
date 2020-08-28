@@ -1,7 +1,7 @@
 import Big from 'big.js';
 import {Node} from './parser/util';
 
-export function calc(left, right, operator): Big {
+export function calc(left: number, right: number, operator: string): Big {
   switch (operator) {
     case '+':
       return new Big(left).plus(right);
@@ -16,20 +16,20 @@ export function calc(left, right, operator): Big {
   }
 }
 
-export function transform(node): Node | Big | string {
+export function transform(node: Node | number): Node | Big | number {
   if (node instanceof Node) {
     if (node.type === 'Expression') {
       return transform(node.expression);
     }
     if (node.type === 'BinaryExpression') {
       return calc(
-        transform(node.left),
-        transform(node.right),
+        transform(node.left) as number,
+        transform(node.right) as number,
         node.operator
       );
     }
     if (node.type === 'NumericLiteral') {
-      return node.value;
+      return Number(node.value);
     }
     throw new Error('Unexpected node');
   }

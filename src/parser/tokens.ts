@@ -3,19 +3,19 @@ import Parser from './index';
 
 export interface ITokenTypeOptions {
   isOperator?: boolean;
-  priority?: number;
+  precedence?: number;
 }
 
 export class TokenType {
   label: string
   isOperator: boolean
-  priority: number
+  precedence: number
   updateContext?: UpdateContext
 
   constructor(label: string, options: ITokenTypeOptions = {}) {
     this.label = label;
     this.isOperator = !!options.isOperator;
-    this.priority = options.priority != null ? options.priority : -1;
+    this.precedence = options.precedence != null ? options.precedence : -1;
   }
 }
 
@@ -32,10 +32,10 @@ export const tokenTypes = {
   parenR: new TokenType(')'),
   end: new TokenType('end'),
   numeric: new TokenType('numeric'),
-  plus: new TokenType('+', {isOperator: true, priority: 10}),
-  minus: new TokenType('-', {isOperator: true, priority: 10}),
-  times: new TokenType('*', {isOperator: true, priority: 20}),
-  div: new TokenType('/', {isOperator: true, priority: 20})
+  plus: new TokenType('+', {isOperator: true, precedence: 10}),
+  minus: new TokenType('-', {isOperator: true, precedence: 10}),
+  times: new TokenType('*', {isOperator: true, precedence: 20}),
+  div: new TokenType('/', {isOperator: true, precedence: 20})
 };
 
 export const tokenContext = {

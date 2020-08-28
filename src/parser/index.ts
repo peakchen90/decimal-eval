@@ -44,49 +44,45 @@ export default class Parser {
     const node = this.startNode();
     this.next();
     node.expression = this.parseExpression();
+    if(this.type !== tt.end) {
+      this.raise(this.pos, '');
+    }
     return this.finishNode(node, 'Expression');
   }
 
   parseExpression(): any {
-    const left = this.parseExprAtom(true);
-
-    if (this.type === tt.end) {
-      return left;
-    }
-    if (this.type.isOperator) {
-      return this.parseExprOp(left, 0, 0, -1);
-    }
-    this.raise(this.pos, '');
+    return this.parseExprAtom();
   }
 
-  parseExprAtom(allowPrefix = false): any {
+  parseExprAtom(): any {
     if (this.type === tt.parenL) {
       this.next();
-      return this.parseExpression();
-    } else if (allowPrefix && (this.type === tt.plus || this.type === tt.minus)) {
-      return this.parsePrefixNumeric();
-    } else if (this.type === tt.numeric) {
-      const node = this.startNode();
-      node.value = this.value;
-      this.finishNode(node, 'NumericLiteral');
-      this.next();
-      return node;
+      return this.parseExprAtom();
+    } else {
+      const left = this.parseMaybePrefixNumeric();
+      return this.parseExprOp(left, 0, 0, -1);
     }
-    this.raise(this.pos, `Unexpected token: ${this.value}`);
   }
 
-  parseExprOp(left, leftStartPos, leftStartLoc, prevPriority): any {
-    const priority = this.type.priority;
-    if (this.type.isOperator && this.type.priority > prevPriority) {
+  /**
+   * 解析二元表达式优先级
+   * @param left
+   * @param leftStartPos
+   * @param leftStartLoc
+   * @param minPrecedence
+   */
+  parseExprOp(left, leftStartPos, leftStartLoc, minPrecedence): any {
+    const precedence = this.type.precedence;
+    if (this.type.isOperator && this.type.precedence > minPrecedence) {
       const node = this.startNode();
       const operator = this.value;
       this.next();
-      const right = this.parseExprOp(this.parseExprAtom(), 0, 0, priority);
+      const right = this.parseExprOp(this.parseMaybePrefixNumeric(), 0, 0, precedence);
       node.left = left;
       node.operator = operator;
       node.right = right;
       this.finishNode(node, 'BinaryExpression');
-      return this.parseExprOp(node, 0, 0, prevPriority);
+      return this.parseExprOp(node, 0, 0, minPrecedence);
     }
     return left;
   }
@@ -94,12 +90,16 @@ export default class Parser {
   /**
    *
    */
-  parsePrefixNumeric(): Node {
-    const prefix = this.type.label;
-    if (!this.eat(tt.numeric)) {
+  parseMaybePrefixNumeric(): Node {
+    const node = this.startNode();
+    let prefix = '';
+    if (this.type === tt.plus || this.type === tt.minus) { // with prefix `+` or `-`
+      prefix = this.value;
+      this.next();
+    }
+    if (this.type !== tt.numeric) {
       this.raise(this.pos, `Unexpected token: ${this.value}`);
     }
-    const node = this.startNode();
     node.value = prefix + this.value;
     this.finishNode(node, 'NumericLiteral');
     this.next();
@@ -184,7 +184,7 @@ export default class Parser {
       this.raise(this.pos - 1, `Unexpected character \`${lastChar}\``);
     }
 
-    const value = this.input.slice(chunkStart, this.pos++);
+    const value = this.input.slice(chunkStart, this.pos);
     return this.finishToken(tt.numeric, value);
   }
 

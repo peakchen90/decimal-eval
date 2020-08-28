@@ -4,13 +4,13 @@ import {IOperator} from './parser/types';
 export default class Operator {
   static create(
     value: string,
-    priority: number,
+    precedence: number,
     calc: (left: number, right: number) => number
   ): IOperator {
     return {
       type: new TokenType(value, {
         isOperator: true,
-        priority
+        precedence
       }),
       value,
       code: value.charCodeAt(0),
