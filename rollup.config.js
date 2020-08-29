@@ -4,6 +4,8 @@ const nodeResolve = require('@rollup/plugin-node-resolve');
 const {default: babel} = require('@rollup/plugin-babel');
 const replace = require('@rollup/plugin-replace');
 const json = require('@rollup/plugin-json');
+import clear from 'rollup-plugin-clear';
+
 const {terser} = require('rollup-plugin-terser');
 const babelConfig = require('./babel.config');
 
@@ -26,6 +28,7 @@ function generateConfig(min = false) {
       exclude: 'node_modules/**'
     },
     plugins: [
+      clear({targets: ['dist']}),
       json(),
       commonjs(),
       babel({
@@ -45,7 +48,7 @@ function generateConfig(min = false) {
         }
       }),
     ].filter(Boolean)
-  }
+  };
 }
 
 module.exports = [

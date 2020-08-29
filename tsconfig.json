@@ -14,7 +14,7 @@
     "downlevelIteration": true,
     "noImplicitAny": false,
     "strict": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "removeComments": false,
     "types": [
       "node",
