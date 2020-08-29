@@ -39,8 +39,9 @@ export const tokenTypes = {
 };
 
 export const tokenContext = {
+  init: new TokenContext('init'),
   parenL: new TokenContext('('),
-  parenR: new TokenContext(')'),
+  // parenR: new TokenContext(')'),
 };
 
 tokenTypes.parenL.updateContext = function (this: Parser): void {

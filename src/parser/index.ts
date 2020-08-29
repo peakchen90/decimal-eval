@@ -30,7 +30,7 @@ export default class Parser {
     this.input = input;
     this.type = tt.end;
     this.value = '';
-    this.context = [tc.parenL];
+    this.context = [tc.init];
     this.pos = 0;
     this.currLine = 1;
     this.lineStart = 0;
@@ -44,8 +44,8 @@ export default class Parser {
     const node = this.startNode();
     this.next();
     node.expression = this.parseExpression();
-    if(this.type !== tt.end) {
-      this.raise(this.pos, '');
+    if (this.type !== tt.end) {
+      this.raise(this.pos, this.value);
     }
     return this.finishNode(node, 'Expression');
   }
@@ -54,13 +54,16 @@ export default class Parser {
     return this.parseExprAtom();
   }
 
-  parseExprAtom(): any {
+  parseExprAtom(minPrecedence = -1): any {
+    let left;
     if (this.type === tt.parenL) {
       this.next();
-      return this.parseExprAtom();
+      left = this.parseExprAtom();
+      this.expect(tt.parenR);
+      return this.parseExprOp(left, 0, 0, minPrecedence);
     } else {
-      const left = this.parseMaybePrefixNumeric();
-      return this.parseExprOp(left, 0, 0, -1);
+      left = this.parseMaybePrefixNumeric();
+      return this.parseExprOp(left, 0, 0, minPrecedence);
     }
   }
 
@@ -77,7 +80,7 @@ export default class Parser {
       const node = this.startNode();
       const operator = this.value;
       this.next();
-      const right = this.parseExprOp(this.parseMaybePrefixNumeric(), 0, 0, precedence);
+      const right = this.parseExprOp(this.parseExprAtom(minPrecedence), 0, 0, precedence);
       node.left = left;
       node.operator = operator;
       node.right = right;
@@ -219,6 +222,12 @@ export default class Parser {
     return this.raise(this.pos - 1, `Unexpected character \`${this.input[this.pos]}\``);
   }
 
+  expect(type): void {
+    if (!this.eat(type)) {
+      this.unexpected();
+    }
+  }
+
   eat(type): boolean {
     if (this.type === type) {
       this.next();
@@ -277,6 +286,10 @@ export default class Parser {
     // err.pos = pos; err.loc = loc; err.raisedAt = this.pos;
     // throw err;
     throw new SyntaxError(message);
+  }
+
+  unexpected(pos?: number): void {
+    this.raise(pos == null ? this.start : pos, 'Unexpected token');
   }
 
   updateContext(prevType?: TokenType): void {
