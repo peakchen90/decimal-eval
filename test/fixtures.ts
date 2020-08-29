@@ -41,7 +41,7 @@ const fixtures: IFixtures = {
       'value': '1.2e+3'
     }
   },
-  '1.2e-3': {
+  '1.2E-3': {
     'type': 'Expression',
     'start': 0,
     'end': 6,
@@ -49,7 +49,7 @@ const fixtures: IFixtures = {
       'type': 'NumericLiteral',
       'start': 0,
       'end': 6,
-      'value': '1.2e-3'
+      'value': '1.2E-3'
     }
   },
   '1+2': {

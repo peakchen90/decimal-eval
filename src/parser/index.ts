@@ -303,6 +303,8 @@ export default class Parser {
           this.pos++;
         }
         this.pos++;
+      } else if (code > 8 && code < 14) { // 制表符等
+        this.pos++;
       } else {
         break;
       }

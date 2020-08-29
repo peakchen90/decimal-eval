@@ -46,7 +46,8 @@
       "__VERSION__": true,
       "ts-jest": {
         "tsConfig": {
-          "target": "es6"
+          "target": "es6",
+          "sourceMap": true
         }
       }
     },
@@ -54,7 +55,10 @@
       "**/test/**/*.test.{ts,tsx}"
     ],
     "collectCoverage": true,
-    "coverageDirectory": "<rootDir>/test/coverage"
+    "coverageDirectory": "<rootDir>/test/coverage",
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}"
+    ]
   },
   "dependencies": {
     "@babel/runtime": "^7.11.0",
