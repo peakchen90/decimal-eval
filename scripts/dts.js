@@ -1,4 +1,8 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+/*
+ eslint-disable
+    @typescript-eslint/no-var-requires,
+    @typescript-eslint/explicit-function-return-type
+ */
 
 /* 自动生成包的d.ts文件 */
 const path = require('path');
@@ -38,19 +42,25 @@ execSync(`tsc ${compilerArgs} src/index.ts`, {
   stdio: 'inherit'
 });
 
-// 提取单个d.ts
-const apiExtractorJsonPath = path.join(rootPath, 'api-extractor.json');
-const extractorConfig = ExtractorConfig.loadFileAndPrepare(apiExtractorJsonPath);
-const extractorResult = Extractor.invoke(extractorConfig, {
-  localBuild: false,
-  showVerboseMessages: true
-});
+function extract(name) {
+  // 提取单个d.ts
+  const apiExtractorJsonPath = path.join(__dirname, 'api-extractor', name);
+  const extractorConfig = ExtractorConfig.loadFileAndPrepare(apiExtractorJsonPath);
+  const extractorResult = Extractor.invoke(extractorConfig, {
+    localBuild: false,
+    showVerboseMessages: true
+  });
 
-if (extractorResult.errorCount === 0) {
-  console.log(chalk.green('API Extractor completed successfully'));
-} else {
-  throw new Error(`API Extractor completed with ${extractorResult.errorCount} errors and ${extractorResult.warningCount} warnings`);
+  if (extractorResult.errorCount === 0) {
+    console.log(chalk.green('API Extractor completed successfully'));
+  } else {
+    throw new Error(`API Extractor completed with ${extractorResult.errorCount} errors and ${extractorResult.warningCount} warnings`);
+  }
 }
+
+extract('index-extractor.json');
+extract('pure-extractor.json');
+
 
 // 删除临时冗余 d.ts
 del.sync(path.join(rootPath, compilerOptions.declarationDir));
