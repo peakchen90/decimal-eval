@@ -63,14 +63,14 @@ export default class Parser {
    * @param minPrecedence 当前上下文的优先级
    * @param operatorType 当前上下文运算符
    */
-  parseExprAtom(leftStartPos: number, minPrecedence: number, operatorType?: TokenType): Node {
+  parseExprAtom(leftStartPos: number, minPrecedence: number): Node {
     if (this.type === tt.parenL) { // 遇到 `(` 则递归解析表达式原子
       this.next();
       const left = this.parseExprAtom(this.start, -1);
       this.expect(tt.parenR);
       return this.parseExprOp(left, leftStartPos, minPrecedence); // 将 `(expr)` 整体作为左值，进入优先级解析流程
     } else {
-      const left = this.parseMaybePrefixNumeric(operatorType);
+      const left = this.parseMaybePrefixNumeric();
       return this.parseExprOp(left, leftStartPos, minPrecedence); // 读取一个数字作为左值，进入优先级解析流程
     }
   }
@@ -90,12 +90,11 @@ export default class Parser {
     if (this.type.isOperator && this.type.precedence > minPrecedence) { // 比较当前运算符与上下文优先级
       const node = this.startNode(leftStartPos);
       const operator = this.value;
-      const operatorType = this.type;
       this.next();
 
       // 解析可能更高优先级的右侧表达式，如: `1 + 2 * 3` 将解析 `2 * 3` 作为右值
       const start = this.start;
-      const maybeHighPrecedenceExpr = this.parseExprAtom(start, precedence, operatorType);
+      const maybeHighPrecedenceExpr = this.parseExprAtom(start, precedence);
       const right = this.parseExprOp(maybeHighPrecedenceExpr, start, precedence);
       node.left = left;
       node.operator = operator;
@@ -112,16 +111,14 @@ export default class Parser {
   /**
    * 解析可能带前缀的数字节点，如: `+1`, `-2`, `3`
    */
-  parseMaybePrefixNumeric(operatorType?: TokenType): Node {
+  parseMaybePrefixNumeric(): Node {
     const node = this.startNode();
     let prefix = '';
     const pos = this.pos;
     const value = this.value;
 
+    // Note: `1 ++ 1` 会当作 `1 + (+1)` 对待，与 JS 会作为 `1++` 对待不同
     if (this.type === tt.plus || this.type === tt.minus) { // with prefix `+` or `-`
-      if (this.type === operatorType) {
-        this.unexpected(value, pos);
-      }
       prefix = this.value;
       this.next();
     }
