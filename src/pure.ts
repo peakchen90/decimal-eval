@@ -2,8 +2,10 @@ import Parser from './parser';
 import Operator, {use} from './operator';
 import {IAdapter, transform} from './transform';
 
+declare const __VERSION__: string;
+
 // 计算方法适配
-let _adapter: IAdapter | null = null;
+let _adapter: IAdapter;
 
 /**
  * 计算表达式
@@ -26,7 +28,7 @@ function evaluate(expression: string): number {
  */
 function useAdapter(adapter: IAdapter): void {
   const baseOperators = ['+', '-', '*', '/'];
-  adapter = adapter || {};
+  adapter = adapter || ({} as IAdapter);
   baseOperators.forEach(op => {
     if (typeof adapter[op] !== 'function') {
       throw new Error(`Missing method for calculation operator \`${op}\``);
@@ -38,6 +40,7 @@ function useAdapter(adapter: IAdapter): void {
 Parser.use = use;
 Parser.evaluate = evaluate;
 Parser.useAdapter = useAdapter;
+
 
 const DecimalEval = {
   evaluate,

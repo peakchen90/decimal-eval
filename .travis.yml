@@ -31,6 +31,7 @@ jobs:
       script:
         - echo "Release npm package..."
         - npm run build
+        - npm run dts
       deploy:
         provider: npm
         email: 1558267774@qq.com

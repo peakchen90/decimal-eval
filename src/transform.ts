@@ -9,8 +9,6 @@ export interface IAdapter {
   '-': (left: number, right: number) => number;
   '*': (left: number, right: number) => number;
   '/': (left: number, right: number) => number;
-
-  [key: string]: (left: number, right: number) => number;
 }
 
 /**

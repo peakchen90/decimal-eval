@@ -1,6 +1,6 @@
 const path = require('path');
 const commonjs = require('@rollup/plugin-commonjs');
-const nodeResolve = require('@rollup/plugin-node-resolve');
+const { nodeResolve } = require('@rollup/plugin-node-resolve');
 const { default: babel } = require('@rollup/plugin-babel');
 const replace = require('@rollup/plugin-replace');
 const json = require('@rollup/plugin-json');
@@ -15,6 +15,7 @@ function generateConfig(
     input,
     filename,
     name,
+    format = 'umd',
     min = false,
   }
 ) {
@@ -23,7 +24,7 @@ function generateConfig(
     output: [
       {
         file: filename,
-        format: 'umd',
+        format,
         sourcemap: true,
         name,
         exports: 'named'
@@ -58,28 +59,44 @@ function generateConfig(
 }
 
 module.exports = [
+  // index.js
   generateConfig({
     input: 'src/index.ts',
     filename: 'dist/index.js',
     name: 'DecimalEval',
-    min: false
   }),
+  // index.min.js
   generateConfig({
     input: 'src/index.ts',
     filename: 'dist/index.min.js',
     name: 'DecimalEval',
     min: true
   }),
+  // index.esm.js
+  generateConfig({
+    input: 'src/index.ts',
+    filename: 'dist/index.esm.js',
+    name: 'DecimalEval',
+    format: 'esm',
+  }),
+  // pure.js
   generateConfig({
     input: 'src/pure.ts',
     filename: 'dist/pure.js',
     name: 'DecimalEvalPure',
-    min: false,
   }),
+  // pure.min.js
   generateConfig({
     input: 'src/pure.ts',
     filename: 'dist/pure.min.js',
     name: 'DecimalEvalPure',
     min: true
+  }),
+  // pure.esm.js
+  generateConfig({
+    input: 'src/pure.ts',
+    filename: 'dist/pure.esm.js',
+    name: 'DecimalEvalPure',
+    format: 'esm',
   })
 ];
