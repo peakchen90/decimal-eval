@@ -8,6 +8,8 @@ const clear = require('rollup-plugin-clear');
 const { terser } = require('rollup-plugin-terser');
 const babelConfig = require('./babel.config');
 
+const __DEV__ = !!process.env.ROLLUP_WATCH
+
 const extensions = ['.ts', '.tsx', '.js', '.jsx', '.json'];
 
 function generateConfig(
@@ -73,30 +75,30 @@ module.exports = [
     min: true
   }),
   // index.esm.js
-  generateConfig({
+  !__DEV__ && generateConfig({
     input: 'src/index.ts',
     filename: 'dist/index.esm.js',
     name: 'DecimalEval',
     format: 'esm',
   }),
   // pure.js
-  generateConfig({
+  !__DEV__ && generateConfig({
     input: 'src/pure.ts',
     filename: 'dist/pure.js',
     name: 'DecimalEvalPure',
   }),
   // pure.min.js
-  generateConfig({
+  !__DEV__ && generateConfig({
     input: 'src/pure.ts',
     filename: 'dist/pure.min.js',
     name: 'DecimalEvalPure',
     min: true
   }),
   // pure.esm.js
-  generateConfig({
+  !__DEV__ && generateConfig({
     input: 'src/pure.ts',
     filename: 'dist/pure.esm.js',
     name: 'DecimalEvalPure',
     format: 'esm',
   })
-];
+].filter(Boolean);
