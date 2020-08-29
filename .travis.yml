@@ -28,7 +28,9 @@ jobs:
     - stage: releaseNpm
       name: "Release npm package"
       node_js: "14"
-      script: echo "Release npm package..."
+      script:
+        - echo "Release npm package..."
+        - npm run build
       deploy:
         provider: npm
         email: 1558267774@qq.com
