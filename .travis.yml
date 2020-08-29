@@ -15,8 +15,6 @@ stages:
   - test
   - name: releaseNpm
     if: branch = master
-  - name: ghPages
-    if: branch = master
 
 jobs:
   include:
