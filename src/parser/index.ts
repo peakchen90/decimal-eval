@@ -39,8 +39,8 @@ export default class Parser {
    * 开始解析，如果是空字符串返回 `null`
    */
   parse(): Node | null {
-    const node = this.startNode();
     this.next();
+    const node = this.startNode(this.start);
     if (this.type === tt.end) return null; // 空字符
 
     node.expression = this.parseExpression();
