@@ -61,15 +61,16 @@ export default class Parser {
    * 解析一个表达式原子, 如: `1 + 2`、`(1 + 2 + 3)`、`1` 都作为一个表达式原子解析
    * @param leftStartPos 左侧开始位置
    * @param minPrecedence 当前上下文的优先级
+   * @param operatorType 当前上下文运算符
    */
-  parseExprAtom(leftStartPos: number, minPrecedence: number): Node {
+  parseExprAtom(leftStartPos: number, minPrecedence: number, operatorType?: TokenType): Node {
     if (this.type === tt.parenL) { // 遇到 `(` 则递归解析表达式原子
       this.next();
       const left = this.parseExprAtom(this.start, -1);
       this.expect(tt.parenR);
       return this.parseExprOp(left, leftStartPos, minPrecedence); // 将 `(expr)` 整体作为左值，进入优先级解析流程
     } else {
-      const left = this.parseMaybePrefixNumeric();
+      const left = this.parseMaybePrefixNumeric(operatorType);
       return this.parseExprOp(left, leftStartPos, minPrecedence); // 读取一个数字作为左值，进入优先级解析流程
     }
   }
@@ -80,16 +81,22 @@ export default class Parser {
    * @param leftStartPos 左值节点起始位置
    * @param minPrecedence 当前上下文的优先级
    */
-  parseExprOp(left: Node, leftStartPos: number, minPrecedence: number): Node {
+  parseExprOp(
+    left: Node,
+    leftStartPos: number,
+    minPrecedence: number
+  ): Node {
     const precedence = this.type.precedence;
     if (this.type.isOperator && this.type.precedence > minPrecedence) { // 比较当前运算符与上下文优先级
       const node = this.startNode(leftStartPos);
       const operator = this.value;
+      const operatorType = this.type;
       this.next();
 
       // 解析可能更高优先级的右侧表达式，如: `1 + 2 * 3` 将解析 `2 * 3` 作为右值
-      const maybeHighPrecedenceExpr = this.parseExprAtom(this.pos, precedence);
-      const right = this.parseExprOp(maybeHighPrecedenceExpr, 0, precedence);
+      const start = this.start;
+      const maybeHighPrecedenceExpr = this.parseExprAtom(start, precedence, operatorType);
+      const right = this.parseExprOp(maybeHighPrecedenceExpr, start, precedence);
       node.left = left;
       node.operator = operator;
       node.right = right;
@@ -105,15 +112,21 @@ export default class Parser {
   /**
    * 解析可能带前缀的数字节点，如: `+1`, `-2`, `3`
    */
-  parseMaybePrefixNumeric(): Node {
+  parseMaybePrefixNumeric(operatorType?: TokenType): Node {
     const node = this.startNode();
     let prefix = '';
+    const pos = this.pos;
+    const value = this.value;
+
     if (this.type === tt.plus || this.type === tt.minus) { // with prefix `+` or `-`
+      if (this.type === operatorType) {
+        this.unexpected(value, pos);
+      }
       prefix = this.value;
       this.next();
     }
     if (this.type !== tt.numeric) {
-      this.unexpected(this.value);
+      this.unexpected(value, pos);
     }
     node.value = prefix + this.value;
     this.next();
@@ -178,13 +191,13 @@ export default class Parser {
               lastChar = this.input[this.pos];
             }
           } else {
-            this.unexpected(char);
+            this.unexpected(char, this.pos);
           }
         } else if (code === 46) { // .
           if (allowDot) {
             allowDot = false;
           } else {
-            this.unexpected(char);
+            this.unexpected(char, this.pos);
           }
         }
         if (!lastChar && !allowE) allowE = true;
@@ -203,7 +216,7 @@ export default class Parser {
       || lastCode === 45 // `-`
       || (isSingleChar() && lastCode === 46) // 单字符 `.`
     ) {
-      this.unexpected(lastChar);
+      this.unexpected(lastChar, this.pos - 1);
     }
 
     const value = this.input.slice(chunkStart, this.pos);
