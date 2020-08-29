@@ -19,9 +19,9 @@ export const installedOperators: IOperator[] = [];
  * 注册自定义运算符
  * @param operator
  */
-export function use(operator: IOperator): void {
+export function useOperator(operator: IOperator): void {
   if (reserved.includes(operator.value)) {
-    throw new Error(`Cannot use reserved char, including: ${reserved.join(', ')}`);
+    throw new Error(`Cannot use reserved character, including: ${reserved.join(', ')}`);
   }
   if (!installedOperators.includes(operator)) {
     installedOperators.unshift(operator); // 注册相同运算符，保证后面的运算符覆盖前面的
@@ -42,8 +42,12 @@ export default class Operator {
     calc: (left: number, right: number) => number
   ): IOperator {
     if (typeof value !== 'string' || !/^\S+$/.test(value)) {
-      throw new Error('The value should be a non-empty string');
+      throw new Error('The operator should be a non-empty string');
     }
+    if (typeof calc !== 'function') {
+      throw new Error('Expected to receive a calculation method, like: `(left, right) => left + right`');
+    }
+
     return {
       type: new TokenType(value, {
         isOperator: true,

@@ -1,5 +1,5 @@
 import Parser from './parser';
-import Operator, {use} from './operator';
+import Operator, {useOperator} from './operator';
 import {IAdapter, transform} from './transform';
 
 declare const __VERSION__: string;
@@ -37,7 +37,7 @@ function useAdapter(adapter: IAdapter): void {
   _adapter = adapter;
 }
 
-Parser.use = use;
+Parser.useOperator = useOperator;
 Parser.evaluate = evaluate;
 Parser.useAdapter = useAdapter;
 

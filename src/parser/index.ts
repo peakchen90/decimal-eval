@@ -16,7 +16,7 @@ export default class Parser {
   lastTokenStart: number
   lastTokenEnd: number
 
-  static use: (operator: IOperator) => void
+  static useOperator: (operator: IOperator) => void
   static evaluate: (expression: string) => number
   static useAdapter: (adapter: IAdapter) => void
 

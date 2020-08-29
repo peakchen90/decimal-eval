@@ -17,4 +17,19 @@ describe('Pure', () => {
       Parser.useAdapter(adapter as IAdapter);
     }).toThrowError(/Missing method for calculation operator/);
   });
+
+  test('use custom adapter', () => {
+    const adapter = {
+      '+': (a, b): number => a + (2 * b),
+      '-': (a, b): number => a - (2 * b),
+      '*': (a, b): number => a * (2 * b),
+      '/': (a, b): number => a / (2 * b),
+    };
+    Parser.useAdapter(adapter);
+
+    expect(evaluate('2 + 5')).toBe(12);
+    expect(evaluate('2 - 5')).toBe(-8);
+    expect(evaluate('2 * 5')).toBe(20);
+    expect(evaluate('2 / 5')).toBe(0.2);
+  });
 });
