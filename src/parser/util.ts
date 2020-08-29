@@ -1,38 +1,17 @@
 /**
- * 位置
- */
-export class Position {
-  line: string
-  column: string
-
-  constructor(line, column) {
-    this.line = line;
-    this.column = column;
-  }
-}
-
-/**
  * AST 节点
  */
 export class Node {
   type: string
   start: number
   end: number
-  loc: {
-    start: Position;
-    end: Position;
-  }
 
   [key: string]: any
 
-  constructor(start: number, startLoc: Position) {
+  constructor(start: number) {
     this.type = '';
     this.start = start;
     this.end = start;
-    this.loc = {
-      start: startLoc,
-      end: startLoc
-    };
   }
 }
 

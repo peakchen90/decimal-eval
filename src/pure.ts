@@ -9,7 +9,7 @@ let _adapter: IAdapter | null = null;
  * 计算表达式
  * @param expression
  */
-function evaluate(expression: string = ''): number {
+function evaluate(expression: string): number {
   if (!_adapter) {
     throw new Error('Please pass the `Parser.useAdapter()` method to set the calculation adapter firstly.');
   }

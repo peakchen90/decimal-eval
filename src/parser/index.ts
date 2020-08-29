@@ -1,6 +1,7 @@
 import {TokenType, tokenTypes as tt} from './token-type';
-import {isNumericStart, isNumericChar, Position, Node} from './util';
-import {installedOperators} from '../operator';
+import {isNumericStart, isNumericChar, Node} from './util';
+import {installedOperators, IOperator} from '../operator';
+import {IAdapter} from '../transform';
 
 /**
  * AST Parser
@@ -10,36 +11,32 @@ export default class Parser {
   type: TokenType
   value: string
   pos: number
-  currLine: number
-  lineStart: number
   start: number
   end: number
-  startLoc: Position
-  endLoc: Position
+  lastTokenStart: number
+  lastTokenEnd: number
 
-  static use: Function
-  static evaluate: Function
-  static useAdapter: Function
+  static use: (operator: IOperator) => void
+  static evaluate: (expression: string) => number
+  static useAdapter: (adapter: IAdapter) => void
 
   /**
    * 解析的字符串
    * @param input
    */
   constructor(input: string) {
-    this.input = input;
+    this.input = String(input);
     this.type = tt.end;
     this.value = '';
     this.pos = 0;
-    this.currLine = 1;
-    this.lineStart = 0;
     this.start = 0;
     this.end = 0;
-    this.startLoc = this.currPosition();
-    this.endLoc = this.currPosition();
+    this.lastTokenStart = 0;
+    this.lastTokenEnd = 0;
   }
 
   /**
-   * 开始解析，如果是空字符串返回 null
+   * 开始解析，如果是空字符串返回 `null`
    */
   parse(): Node | null {
     const node = this.startNode();
@@ -48,7 +45,7 @@ export default class Parser {
 
     node.expression = this.parseExpression();
     if (this.type !== tt.end) { // 其后遇到其他非法字符
-      this.raise(this.pos, this.value);
+      this.unexpected(this.value);
     }
     return this.finishNode(node, 'Expression');
   }
@@ -57,52 +54,56 @@ export default class Parser {
    * 解析表达式
    */
   parseExpression(): Node {
-    return this.parseExprAtom();
+    return this.parseExprAtom(this.start, -1);
   }
 
   /**
-   * 解析一个表达式原子, 如: 1+2、(1+2+3)、1 都作为一个表达式原子解析
-   * @param minPrecedence
+   * 解析一个表达式原子, 如: `1 + 2`、`(1 + 2 + 3)`、`1` 都作为一个表达式原子解析
+   * @param leftStartPos 左侧开始位置
+   * @param minPrecedence 当前上下文的优先级
    */
-  parseExprAtom(minPrecedence = -1): any {
-    let left;
-    if (this.type === tt.parenL) {
+  parseExprAtom(leftStartPos: number, minPrecedence: number): Node {
+    if (this.type === tt.parenL) { // 遇到 `(` 则递归解析表达式原子
       this.next();
-      left = this.parseExprAtom();
+      const left = this.parseExprAtom(this.start, -1);
       this.expect(tt.parenR);
-      return this.parseExprOp(left, 0, 0, minPrecedence);
+      return this.parseExprOp(left, leftStartPos, minPrecedence); // 将 `(expr)` 整体作为左值，进入优先级解析流程
     } else {
-      left = this.parseMaybePrefixNumeric();
-      return this.parseExprOp(left, 0, 0, minPrecedence);
+      const left = this.parseMaybePrefixNumeric();
+      return this.parseExprOp(left, leftStartPos, minPrecedence); // 读取一个数字作为左值，进入优先级解析流程
     }
   }
 
   /**
    * 解析二元表达式优先级
-   * @param left
-   * @param leftStartPos
-   * @param leftStartLoc
-   * @param minPrecedence
+   * @param left 左值
+   * @param leftStartPos 左值节点起始位置
+   * @param minPrecedence 当前上下文的优先级
    */
-  parseExprOp(left, leftStartPos, leftStartLoc, minPrecedence): Node {
+  parseExprOp(left: Node, leftStartPos: number, minPrecedence: number): Node {
     const precedence = this.type.precedence;
-    if (this.type.isOperator && this.type.precedence > minPrecedence) {
-      const node = this.startNode();
+    if (this.type.isOperator && this.type.precedence > minPrecedence) { // 比较当前运算符与上下文优先级
+      const node = this.startNode(leftStartPos);
       const operator = this.value;
       this.next();
-      const maybeHighPrecedenceExpr = this.parseExprAtom(precedence);
-      const right = this.parseExprOp(maybeHighPrecedenceExpr, 0, 0, precedence);
+
+      // 解析可能更高优先级的右侧表达式，如: `1 + 2 * 3` 将解析 `2 * 3` 作为右值
+      const maybeHighPrecedenceExpr = this.parseExprAtom(this.pos, precedence);
+      const right = this.parseExprOp(maybeHighPrecedenceExpr, 0, precedence);
       node.left = left;
       node.operator = operator;
       node.right = right;
       this.finishNode(node, 'BinaryExpression');
-      return this.parseExprOp(node, 0, 0, minPrecedence);
+
+      // 将已经解析的二元表达式作为左值，然后递归解析后面可能的同等优先级或低优先级的表达式作为右值
+      // 如: `1 + 2 + 3`, 当前已经解析 `1 + 2`, 然后将该节点作为左值递归解析表达式优先级
+      return this.parseExprOp(node, leftStartPos, minPrecedence);
     }
     return left;
   }
 
   /**
-   * 解析可能带前缀的数字节点，如: +1, -2, 3
+   * 解析可能带前缀的数字节点，如: `+1`, `-2`, `3`
    */
   parseMaybePrefixNumeric(): Node {
     const node = this.startNode();
@@ -112,26 +113,21 @@ export default class Parser {
       this.next();
     }
     if (this.type !== tt.numeric) {
-      this.raise(this.pos, `Unexpected token: ${this.value}`);
+      this.unexpected(this.value);
     }
     node.value = prefix + this.value;
-    this.finishNode(node, 'NumericLiteral');
     this.next();
-    return node;
-  }
-
-  /**
-   * 返回当前位置
-   */
-  currPosition(): Position {
-    return new Position(this.currLine, this.pos - this.lineStart);
+    return this.finishNode(node, 'NumericLiteral');
   }
 
   /**
    * 读取并移到下一个 Token
    */
   next(): void {
+    this.lastTokenStart = this.start;
+    this.lastTokenEnd = this.end;
     this.skipSpace();
+
     this.start = this.pos;
     if (this.pos >= this.input.length) {
       if (this.type === tt.end) return;
@@ -182,13 +178,13 @@ export default class Parser {
               lastChar = this.input[this.pos];
             }
           } else {
-            this.raise(this.pos, `Unexpected character ${char}`);
+            this.unexpected(char);
           }
         } else if (code === 46) { // .
           if (allowDot) {
             allowDot = false;
           } else {
-            this.raise(this.pos, `Unexpected character ${char}`);
+            this.unexpected(char);
           }
         }
         if (!lastChar && !allowE) allowE = true;
@@ -207,7 +203,7 @@ export default class Parser {
       || lastCode === 45 // `-`
       || (isSingleChar() && lastCode === 46) // 单字符 `.`
     ) {
-      this.raise(this.pos - 1, `Unexpected character \`${lastChar}\``);
+      this.unexpected(lastChar);
     }
 
     const value = this.input.slice(chunkStart, this.pos);
@@ -251,43 +247,36 @@ export default class Parser {
         this.pos++;
         return this.finishToken(tt.div, '/');
       default:
-        return this.raise(this.pos - 1, `Unexpected character \`${this.input[this.pos]}\``);
+        this.unexpected(this.input[this.pos]);
     }
   }
 
   /**
-   * 消费当前指定类型的 token，否则抛出异常
+   * 完善一个 Token
    * @param type
+   * @param value
    */
-  expect(type: TokenType): void {
-    if (!this.eat(type)) {
-      this.unexpected();
-    }
-  }
-
-  /**
-   * 消费一个 token，如果是指定的 token 类型，则移动到下一个 token ，返回 true，否则返回 false
-   * @param type
-   */
-  eat(type): boolean {
-    if (this.type === type) {
-      this.next();
-      return true;
-    }
-    return false;
-  }
-
   finishToken(type: TokenType, value = ''): void {
     this.end = this.pos;
-    this.endLoc = this.currPosition();
     this.type = type;
     this.value = value;
   }
 
+  /**
+   * 在当前位置创建一个新节点
+   */
+  startNode(pos?: number): Node {
+    return new Node(pos ?? this.start);
+  }
+
+  /**
+   * 完善一个节点
+   * @param node
+   * @param type
+   */
   finishNode(node: Node, type: string): Node {
     node.type = type;
-    node.end = this.end;
-    node.loc.end = this.endLoc;
+    node.end = this.lastTokenEnd;
     return node;
   }
 
@@ -304,8 +293,6 @@ export default class Parser {
           this.pos++;
         }
         this.pos++;
-        this.currLine++;
-        this.lineStart = this.pos;
       } else {
         break;
       }
@@ -313,17 +300,33 @@ export default class Parser {
   }
 
   /**
-   * 在当前位置创建一个新节点
+   * 消费当前指定类型的 token，否则抛出异常
+   * @param type
    */
-  startNode(): Node {
-    return new Node(this.start, this.startLoc);
+  expect(type: TokenType): void {
+    if (!this.eat(type)) {
+      this.unexpected(this.value);
+    }
   }
 
   /**
-   * 在指定位置创建一个新节点
+   * 消费一个 token，如果是指定的 token 类型，则移动到下一个 token ，返回 true，否则返回 false
+   * @param type
    */
-  startNodeAt(pos: number, loc: Position): Node {
-    return new Node(pos, loc);
+  eat(type: TokenType): boolean {
+    if (this.type === type) {
+      this.next();
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * 抛出 Unexpected token 异常
+   * @param pos
+   */
+  unexpected(token = '', pos?: number): void {
+    this.raise(pos ?? this.start, `Unexpected token: \`${token}\``);
   }
 
   /**
@@ -332,19 +335,11 @@ export default class Parser {
    * @param message
    */
   raise(pos: number, message: string): void {
-    // const loc = getLineInfo(this.input, pos);
-    // message += ` (${  loc.line  }:${  loc.column  })`;
-    // const err = new SyntaxError(message);
-    // err.pos = pos; err.loc = loc; err.raisedAt = this.pos;
-    // throw err;
+    if (pos > this.input.length - 1) {
+      message = 'Unexpected end of input';
+    } else {
+      message += ` at position ${pos}`;
+    }
     throw new SyntaxError(message);
-  }
-
-  /**
-   * 抛出 Unexpected token 异常
-   * @param pos
-   */
-  unexpected(pos?: number): void {
-    this.raise(pos == null ? this.start : pos, 'Unexpected token');
   }
 }

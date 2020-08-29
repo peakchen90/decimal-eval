@@ -37,7 +37,7 @@ export function calc(
         return customOperator.calc(left, right);
       }
   }
-  throw new Error('Unexpected operator');
+  throw new Error(`Unexpected operator: ${operator}`);
 }
 
 /**
@@ -60,7 +60,7 @@ export function transform(node: Node | number, adapter: IAdapter): Node | number
     if (node.type === 'NumericLiteral') {
       return Number(node.value);
     }
-    throw new Error('Unexpected node');
+    throw new Error(`Unexpected type: ${node.type}`);
   }
   return node;
 }

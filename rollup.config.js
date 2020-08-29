@@ -60,25 +60,25 @@ function generateConfig(
 module.exports = [
   generateConfig({
     input: 'src/index.ts',
-    filename: 'dist/decimal-eval.js',
+    filename: 'dist/index.js',
     name: 'DecimalEval',
     min: false
   }),
   generateConfig({
     input: 'src/index.ts',
-    filename: 'dist/decimal-eval.min.js',
+    filename: 'dist/index.min.js',
     name: 'DecimalEval',
     min: true
   }),
   generateConfig({
     input: 'src/pure.ts',
-    filename: 'dist/decimal-eval-pure.js',
+    filename: 'dist/pure.js',
     name: 'DecimalEvalPure',
     min: false,
   }),
   generateConfig({
     input: 'src/pure.ts',
-    filename: 'dist/decimal-eval-pure.min.js',
+    filename: 'dist/pure.min.js',
     name: 'DecimalEvalPure',
     min: true
   })

@@ -42,7 +42,7 @@ export default class Operator {
     calc: (left: number, right: number) => number
   ): IOperator {
     if (typeof value !== 'string' || !/^\S+$/.test(value)) {
-      throw new Error('value should be a non-empty string');
+      throw new Error('The value should be a non-empty string');
     }
     return {
       type: new TokenType(value, {
