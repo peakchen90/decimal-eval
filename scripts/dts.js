@@ -6,7 +6,6 @@ const { execSync } = require('child_process');
 const chalk = require('chalk');
 const del = require('del');
 const { Extractor, ExtractorConfig } = require('@microsoft/api-extractor');
-// const { compilerOptions } = require('../tsconfig.json');
 
 const rootPath = path.join(__dirname, '..');
 
