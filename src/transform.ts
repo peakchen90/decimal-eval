@@ -89,6 +89,7 @@ export function transform(node: Node | number, adapter: IAdapter): Node | number
       case 'NumericLiteral':
         return Number(node.value);
       default:
+        /* istanbul ignore next */
         throw new Error(`Unexpected type: ${node.type}`);
     }
   }

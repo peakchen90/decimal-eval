@@ -71,18 +71,18 @@ describe('Parser Error Capture', () => {
   test('unexpected token: extra `)`', () => {
     expect(() => {
       new Parser('1+(2+3))').parse();
-    }).toThrowError(/Unexpected token/);
+    }).toThrowError(/at position 7/);
   });
 
   test('unexpected token: missing `)`', () => {
     expect(() => {
       new Parser('(2+3 3').parse();
-    }).toThrowError(/Unexpected token/);
+    }).toThrowError(/at position 5/);
   });
 
   test('unexpected token: unknown character', () => {
     expect(() => {
       new Parser('1^2').parse();
-    }).toThrowError(/Unexpected token/);
+    }).toThrowError(/at position 1/);
   });
 });

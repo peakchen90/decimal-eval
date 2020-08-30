@@ -174,7 +174,7 @@ const fixtures: IFixtures = {
       }
     }
   },
-  '1+-2':  {
+  '1+-2': {
     'type': 'Expression',
     'start': 0,
     'end': 4,
@@ -204,7 +204,7 @@ const fixtures: IFixtures = {
       }
     }
   },
-  '1++2':  {
+  '1++2': {
     'type': 'Expression',
     'start': 0,
     'end': 4,
@@ -234,7 +234,7 @@ const fixtures: IFixtures = {
       }
     }
   },
-  '1--2':  {
+  '1--2': {
     'type': 'Expression',
     'start': 0,
     'end': 4,
@@ -260,6 +260,69 @@ const fixtures: IFixtures = {
           'start': 3,
           'end': 4,
           'value': '2',
+        }
+      }
+    }
+  },
+  '1 - + - ( + 2 - - 3 )': {
+    'type': 'Expression',
+    'start': 0,
+    'end': 21,
+    'expression': {
+      'type': 'BinaryExpression',
+      'start': 0,
+      'end': 21,
+      'left': {
+        'type': 'NumericLiteral',
+        'start': 0,
+        'end': 1,
+        'value': '1'
+      },
+      'operator': '-',
+      'right': {
+        'type': 'UnaryExpression',
+        'start': 4,
+        'end': 21,
+        'operator': '+',
+        'prefix': true,
+        'argument': {
+          'type': 'UnaryExpression',
+          'start': 6,
+          'end': 21,
+          'operator': '-',
+          'prefix': true,
+          'argument': {
+            'type': 'BinaryExpression',
+            'start': 10,
+            'end': 19,
+            'left': {
+              'type': 'UnaryExpression',
+              'start': 10,
+              'end': 13,
+              'operator': '+',
+              'prefix': true,
+              'argument': {
+                'type': 'NumericLiteral',
+                'start': 12,
+                'end': 13,
+                'value': '2'
+              }
+            },
+            'operator': '-',
+            'right': {
+              'type': 'UnaryExpression',
+              'start': 16,
+              'end': 19,
+              'operator': '-',
+              'prefix': true,
+              'argument': {
+                'type': 'NumericLiteral',
+                'start': 18,
+                'end': 19,
+                'value': '3'
+              }
+            }
+          }
         }
       }
     }

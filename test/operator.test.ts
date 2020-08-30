@@ -52,10 +52,16 @@ describe('Binary Operator', () => {
 });
 
 describe('Unary Operator', () => {
-  test('custom unary operator: `double`', () => {
-    // const mod = Operator.create('double', 19, (v) => v * 2);
-    // Parser.useOperator(mod);
-    // expect(evaluate('double1.5')).toBe(3);
-    // expect(evaluate('double .035 * 100')).toBe(7);
+  test('custom unary operator: low precedence `double`', () => {
+    const mod = Operator.create('double', 19, (v) => v * 2, true);
+    Parser.useOperator(mod);
+    expect(evaluate('double1.5')).toBe(3);
+    expect(evaluate('double .035 * 100')).toBe(7);
+  });
+
+  test('custom unary operator: low precedence `double`', () => {
+    const mod = Operator.create('double', 0, (v) => v * 2, true);
+    Parser.useOperator(mod);
+    expect(evaluate('double 1 + 4 - 2')).toBe(6);
   });
 });

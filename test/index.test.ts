@@ -51,4 +51,10 @@ describe('Build-In Custom Operators', () => {
     expect(0.2 ** 3).toBeGreaterThan(0.008);
     expect(evaluate('0.2 ** 3')).toBe(0.008);
   });
+
+  test('abs', () => {
+    Parser.installedOperators.length = 0;
+    Parser.useOperator(Operator.abs as IOperator);
+    expect(evaluate('abs -1.5')).toBe(1.5);
+  });
 });

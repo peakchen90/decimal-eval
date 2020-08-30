@@ -122,10 +122,10 @@ export default class Parser {
   }
 
   /**
-   * 解析可能带前缀的表达式，如: `+1`, `-(2)`, `3`, `-(3 + 6)`
+   * 解析可能带前缀的表达式，如: `+1`, `-(2)`, `3`, `-(3 + 4)`, `+-+5`
    * @param minPrecedence 当前上下文的优先级，一元前缀表达式默认为: 99
    */
-  parseMaybeUnary(minPrecedence = 99): Node {
+  parseMaybeUnary(minPrecedence: number): Node {
     const precedence = this.type.precedence;
     const node = this.startNode();
     const start = this.start;
@@ -133,9 +133,6 @@ export default class Parser {
 
     // Note: `1 ++ 1` 会当作 `1 + (+1)` 对待，与 JS 会作为 `1++` 对待不同
     if (this.type.prefix) {
-      if (!this.allowPrefix) {
-        this.unexpected(value);
-      }
       if (precedence >= minPrecedence) { // 相同优先级的一元运算符可以连续
         node.operator = value;
         node.prefix = true;
