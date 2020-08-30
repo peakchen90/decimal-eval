@@ -74,7 +74,6 @@ export default class Parser {
    * 解析一个表达式原子, 如: `1 + 2`、`(1 + 2 + 3)`、`1` 都作为一个表达式原子解析
    * @param leftStartPos 左侧开始位置
    * @param minPrecedence 当前上下文的优先级
-   * @param operatorType 当前上下文运算符
    */
   parseExprAtom(leftStartPos: number, minPrecedence: number): Node {
     if (this.type === tt.parenL) { // 遇到 `(` 则递归解析表达式原子
@@ -123,7 +122,7 @@ export default class Parser {
 
   /**
    * 解析可能带前缀的表达式，如: `+1`, `-(2)`, `3`, `-(3 + 4)`, `+-+5`
-   * @param minPrecedence 当前上下文的优先级，一元前缀表达式默认为: 99
+   * @param minPrecedence 当前上下文的优先级
    */
   parseMaybeUnary(minPrecedence: number): Node {
     const precedence = this.type.precedence;
@@ -132,7 +131,7 @@ export default class Parser {
     const value = this.value;
 
     // Note: `1 ++ 1` 会当作 `1 + (+1)` 对待，与 JS 会作为 `1++` 对待不同
-    if (this.type.prefix) {
+    if (this.type.isPrefix) {
       if (precedence >= minPrecedence) { // 相同优先级的一元运算符可以连续
         node.operator = value;
         node.prefix = true;
@@ -307,7 +306,7 @@ export default class Parser {
    */
   updateContext(prevType: TokenType): void {
     const type = this.type;
-    if (type.isBinary || type.prefix) {
+    if (type.isBinary || type.isPrefix) {
       this.allowPrefix = true;
     } else if (type.updateContext) {
       type.updateContext.call(this, prevType);
@@ -377,6 +376,7 @@ export default class Parser {
 
   /**
    * 抛出 Unexpected token 异常
+   * @param token
    * @param pos
    */
   unexpected(token = '', pos?: number): void {

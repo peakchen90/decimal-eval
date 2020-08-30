@@ -41,14 +41,14 @@ export default class Operator {
    * @param value 运算符的值
    * @param precedence 运算符优先级
    * @param calc 计算方法
-   * @param prefix 是否可以作为前缀（一元运算符，仅支持运算符在左侧，计算方法 `calc` 只接收一个参数）
+   * @param isPrefix 是否可以作为前缀（一元运算符，仅支持运算符在左侧，计算方法 `calc` 只接收一个参数）
    * @see 运算符优先级参考: https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
    */
   static create<M extends BinaryCalcMethod | UnaryCalcMethod>(
     value: string,
     precedence: number,
     calc: M,
-    prefix = false
+    isPrefix = false
   ): IOperator<M> {
     if (typeof value !== 'string' || !/^\S+$/.test(value)) {
       throw new Error('The operator should be a non-empty string');
@@ -59,7 +59,7 @@ export default class Operator {
     if (typeof calc !== 'function') {
       throw new Error(
         `Expected to receive a calculation method, like: \`${
-          prefix
+          isPrefix
             ? '(value) => -value'
             : '(left, right) => left + right'
         }\``
@@ -68,8 +68,8 @@ export default class Operator {
 
     return {
       type: new TokenType(value, {
-        isBinary: !prefix,
-        prefix,
+        isBinary: !isPrefix,
+        isPrefix,
         precedence,
       }),
       value,

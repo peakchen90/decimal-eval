@@ -55,7 +55,7 @@ export function unaryCalculation(value: number, operator: string): number {
       return -value;
     default:
       const customOperator = installedOperators.find(op => {
-        return op.type.prefix && op.value === operator;
+        return op.type.isPrefix && op.value === operator;
       }) as IOperator<UnaryCalcMethod>;
       if (customOperator) {
         return customOperator.calc(value);
@@ -68,6 +68,7 @@ export function unaryCalculation(value: number, operator: string): number {
 /**
  * 转换 AST -> 计算结果
  * @param node
+ * @param adapter
  */
 export function transform(node: Node | number, adapter: IAdapter): Node | number {
   if (node instanceof Node) {

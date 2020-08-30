@@ -18,8 +18,7 @@ function evaluate(expression: string): number {
 
   const ast = new Parser(expression).parse();
   if (!ast) return 0; // 空字符串
-  const value = transform(ast, _adapter) as number;
-  return value;
+  return transform(ast, _adapter) as number;
 }
 
 /**

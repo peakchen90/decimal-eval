@@ -2,7 +2,7 @@ import Parser from './index';
 
 export interface ITokenTypeOptions {
   isBinary?: boolean; // 是否为二元元运算符
-  prefix?: boolean; // 是否可以作为前缀（一元运算符，仅支持运算符在左侧）
+  isPrefix?: boolean; // 是否可以作为前缀（一元运算符，仅支持运算符在左侧）
   precedence?: number; // 运算符优先级
 }
 
@@ -18,7 +18,7 @@ export class TokenType {
   /**
    * 是否可以作为前缀（一元运算符，仅支持运算符在左侧）
    */
-  prefix: boolean
+  isPrefix: boolean
   /**
    * 运算符优先级
    * @see https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
@@ -37,7 +37,7 @@ export class TokenType {
   constructor(label: string, options: ITokenTypeOptions = {}) {
     this.label = label;
     this.isBinary = !!options.isBinary;
-    this.prefix = !!options.prefix;
+    this.isPrefix = !!options.isPrefix;
     this.precedence = options.precedence ?? -1;
   }
 }
@@ -51,8 +51,8 @@ export const tokenTypes = {
   minus: new TokenType('-', {isBinary: true, precedence: 13}),
   times: new TokenType('*', {isBinary: true, precedence: 14}),
   div: new TokenType('/', {isBinary: true, precedence: 14}),
-  prefixPlus: new TokenType('+', {prefix: true, precedence: 16}),
-  prefixMinus: new TokenType('-', {prefix: true, precedence: 16})
+  prefixPlus: new TokenType('+', {isPrefix: true, precedence: 16}),
+  prefixMinus: new TokenType('-', {isPrefix: true, precedence: 16})
 };
 
 tokenTypes.parenL.updateContext = function (): void {
