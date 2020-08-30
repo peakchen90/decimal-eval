@@ -128,7 +128,7 @@ export default class Parser {
   parseMaybeUnary(minPrecedence = 99): Node {
     const precedence = this.type.precedence;
     const node = this.startNode();
-    const start = this.pos;
+    const start = this.start;
     const value = this.value;
 
     // Note: `1 ++ 1` 会当作 `1 + (+1)` 对待，与 JS 会作为 `1++` 对待不同

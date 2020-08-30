@@ -43,29 +43,29 @@ describe('Parser Error Capture', () => {
 
   test('unexpected token when read numeric with prefix', () => {
     expect(() => {
-      new Parser('1++)').parse();
-    }).toThrowError(/Unexpected token/);
+      new Parser('1++)+1').parse();
+    }).toThrowError(/at position 3/);
   });
 
   test('unexpected token: `e`', () => {
     expect(() => {
       new Parser('1e2e3').parse();
-    }).toThrowError(/Unexpected token/);
+    }).toThrowError(/at position 3/);
     expect(() => {
       new Parser('1e').parse();
-    }).toThrowError(/Unexpected token/);
+    }).toThrowError(/at position 1/);
     expect(() => {
       new Parser('.E').parse();
-    }).toThrowError(/Unexpected token/);
+    }).toThrowError(/at position 1/);
   });
 
   test('unexpected token: `.`', () => {
     expect(() => {
       new Parser('1.2.3').parse();
-    }).toThrowError(/Unexpected token/);
+    }).toThrowError(/at position 3/);
     expect(() => {
       new Parser('.').parse();
-    }).toThrowError(/Unexpected token/);
+    }).toThrowError(/at position 0/);
   });
 
   test('unexpected token: extra `)`', () => {

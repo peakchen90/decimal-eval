@@ -160,14 +160,21 @@ const fixtures: IFixtures = {
       },
       'operator': '-',
       'right': {
-        'type': 'NumericLiteral',
+        'type': 'UnaryExpression',
         'start': 2,
         'end': 4,
-        'value': '+2'
+        'operator': '+',
+        'prefix': true,
+        'argument': {
+          'type': 'NumericLiteral',
+          'start': 3,
+          'end': 4,
+          'value': '2',
+        }
       }
     }
   },
-  '1+-2': {
+  '1+-2':  {
     'type': 'Expression',
     'start': 0,
     'end': 4,
@@ -183,14 +190,21 @@ const fixtures: IFixtures = {
       },
       'operator': '+',
       'right': {
-        'type': 'NumericLiteral',
+        'type': 'UnaryExpression',
         'start': 2,
         'end': 4,
-        'value': '-2'
+        'operator': '-',
+        'prefix': true,
+        'argument': {
+          'type': 'NumericLiteral',
+          'start': 3,
+          'end': 4,
+          'value': '2',
+        }
       }
     }
   },
-  '1++2': {
+  '1++2':  {
     'type': 'Expression',
     'start': 0,
     'end': 4,
@@ -206,14 +220,21 @@ const fixtures: IFixtures = {
       },
       'operator': '+',
       'right': {
-        'type': 'NumericLiteral',
+        'type': 'UnaryExpression',
         'start': 2,
         'end': 4,
-        'value': '+2'
+        'operator': '+',
+        'prefix': true,
+        'argument': {
+          'type': 'NumericLiteral',
+          'start': 3,
+          'end': 4,
+          'value': '2',
+        }
       }
     }
   },
-  '1--2': {
+  '1--2':  {
     'type': 'Expression',
     'start': 0,
     'end': 4,
@@ -229,10 +250,17 @@ const fixtures: IFixtures = {
       },
       'operator': '-',
       'right': {
-        'type': 'NumericLiteral',
+        'type': 'UnaryExpression',
         'start': 2,
         'end': 4,
-        'value': '-2'
+        'operator': '-',
+        'prefix': true,
+        'argument': {
+          'type': 'NumericLiteral',
+          'start': 3,
+          'end': 4,
+          'value': '2',
+        }
       }
     }
   },
