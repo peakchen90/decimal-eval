@@ -1,4 +1,4 @@
-import {TokenType, tokenTypes as tt} from './token-type';
+import {TokenType, tokenTypes, tokenTypes as tt} from './token-type';
 import {isNumericStart, isNumericChar, Node} from './util';
 import {installedOperators, IOperator} from '../operator';
 import {IAdapter} from '../transform';
@@ -7,18 +7,28 @@ import {IAdapter} from '../transform';
  * AST Parser
  */
 export default class Parser {
-  input: string
-  type: TokenType
-  value: string
-  pos: number
-  start: number
-  end: number
-  lastTokenStart: number
-  lastTokenEnd: number
+  input: string // 输入的解析字符串
+  type: TokenType // 当前 Token 的类型
+  value: string  // 当前 Token 的值
+  pos: number // 当前位置
+  start: number // 当前 Token 的开始位置
+  end: number // 当前 Token 的结束位置
+  lastTokenStart: number // 上一个 Token 的开始位置
+  lastTokenEnd: number // 上一个 Token 的结束位置
 
+  /**
+   * pubic method
+   */
   static useOperator: (operator: IOperator) => void
   static evaluate: (expression: string) => number
   static useAdapter: (adapter: IAdapter) => void
+
+  /**
+   * internal
+   */
+  static Node = Node
+  static TokenType = TokenType
+  static tokenTypes = tokenTypes
 
   /**
    * 解析的字符串

@@ -8,7 +8,7 @@ const clear = require('rollup-plugin-clear');
 const { terser } = require('rollup-plugin-terser');
 const babelConfig = require('./babel.config');
 
-const __DEV__ = !!process.env.ROLLUP_WATCH
+const __DEV__ = !!process.env.ROLLUP_WATCH;
 
 const extensions = ['.ts', '.tsx', '.js', '.jsx', '.json'];
 
@@ -16,7 +16,6 @@ function generateConfig(
   {
     input,
     filename,
-    name,
     format = 'umd',
     min = false,
   }
@@ -28,7 +27,7 @@ function generateConfig(
         file: filename,
         format,
         sourcemap: true,
-        name,
+        name: 'DecimalEval',
         exports: 'named'
       },
     ],
@@ -64,41 +63,35 @@ module.exports = [
   // index.js
   generateConfig({
     input: 'src/index.ts',
-    filename: 'dist/index.js',
-    name: 'DecimalEval',
+    filename: 'dist/index.js'
   }),
   // index.min.js
   generateConfig({
     input: 'src/index.ts',
     filename: 'dist/index.min.js',
-    name: 'DecimalEval',
     min: true
   }),
   // index.esm.js
   !__DEV__ && generateConfig({
     input: 'src/index.ts',
     filename: 'dist/index.esm.js',
-    name: 'DecimalEval',
     format: 'esm',
   }),
   // pure.js
   !__DEV__ && generateConfig({
     input: 'src/pure.ts',
-    filename: 'dist/pure.js',
-    name: 'DecimalEvalPure',
+    filename: 'dist/pure.js'
   }),
   // pure.min.js
   !__DEV__ && generateConfig({
     input: 'src/pure.ts',
     filename: 'dist/pure.min.js',
-    name: 'DecimalEvalPure',
     min: true
   }),
   // pure.esm.js
   !__DEV__ && generateConfig({
     input: 'src/pure.ts',
     filename: 'dist/pure.esm.js',
-    name: 'DecimalEvalPure',
     format: 'esm',
   })
 ].filter(Boolean);

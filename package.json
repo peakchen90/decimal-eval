@@ -1,7 +1,7 @@
 {
   "name": "decimal-eval",
   "description": "A small, safe, fast JavaScript library for parsing decimal arithmetic.",
-  "version": "0.0.1-alpha.3",
+  "version": "0.0.1-alpha.5",
   "main": "index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -13,16 +13,21 @@
     "dts": "node scripts/dts.js"
   },
   "keywords": [
+    "eval",
+    "decimal",
     "mathjs",
     "math",
-    "big.js",
-    "ast",
+    "math-parser",
+    "math-eval",
+    "parser",
     "js",
-    "parse",
-    "decimal",
-    "eval",
-    "calc"
+    "javascript",
+    "calculation"
   ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
   "homepage": "https://github.com/peakchen90/decimal-eval#readme",
   "bugs": {
     "url": "https://github.com/peakchen90/decimal-eval/issues"

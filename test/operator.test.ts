@@ -10,16 +10,24 @@ describe('Operator', () => {
   test('custom operator: `%`', () => {
     const mod = Operator.create('%', 14, (a, b) => a % b);
     Parser.useOperator(mod);
-    expect(evaluate('1%2')).toBe(1);
+    expect(evaluate('2 % 3')).toBe(2);
+    expect(evaluate('2 % 3 + 5')).toBe(7);
   });
 
-  test('custom operator: `%`', () => {
-    const mod = Operator.create('%', 14, (a, b) => a % b);
+  test('custom operator: `**`', () => {
+    const mod = Operator.create('**', 15, (a, b) => Math.pow(a, b));
     Parser.useOperator(mod);
-    expect(evaluate('1%2')).toBe(1);
+    expect(evaluate('2 ** 3')).toBe(8);
+    expect(evaluate('2 ** 3 - 1')).toBe(7);
   });
 
-  test('use reserved character as operator', () => {
+  test('custom operator: use a identifier', () => {
+    const mod = Operator.create('add', 13, (a, b) => a + b);
+    Parser.useOperator(mod);
+    expect(evaluate('2 add 3')).toBe(5);
+  });
+
+  test('cannot use reserved character as operator', () => {
     const mod = Operator.create('+', 13, (a, b) => a + b);
     expect(() => {
       Parser.useOperator(mod);
