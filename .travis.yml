@@ -3,6 +3,8 @@ language: node_js
 os:
   - linux
 
+dist: xenial
+
 node_js:
   - "10"
   - "12"
@@ -35,7 +37,7 @@ jobs:
       deploy:
         provider: npm
         email: 1558267774@qq.com
-        api_key: "$NPM_TOKEN"
+        api_token: "$NPM_TOKEN"
         skip_cleanup: true
         on:
           branch: master
