@@ -2,7 +2,7 @@ import {TokenType} from './parser/token-type';
 
 export interface IOperator {
   value: string;
-  code: number[];
+  codes: number[];
   type: TokenType;
   calc: (left: number, right: number) => number;
 }
@@ -29,6 +29,9 @@ export function useOperator(operator: IOperator): void {
 }
 
 export default class Operator {
+  static mod?: IOperator;
+  static pow?: IOperator
+
   /**
    * 创建运算符
    * @param value 运算符的值
@@ -54,7 +57,7 @@ export default class Operator {
         precedence
       }),
       value,
-      code: value.split('').map((_, i) => value.charCodeAt(i)),
+      codes: value.split('').map((_, i) => value.charCodeAt(i)),
       calc
     };
   }

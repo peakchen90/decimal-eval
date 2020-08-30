@@ -1,4 +1,5 @@
-import {evaluate} from '../src';
+import {evaluate, Operator, Parser} from '../src/index';
+import {IOperator} from '../src/operator';
 
 describe('Evaluate', () => {
   test('empty string', () => {
@@ -32,5 +33,22 @@ describe('Evaluate', () => {
   // test for super complex calculation
   test('(+.1 + (-.2) - ((1.0e+2 + (-0.5 / (2. * ((100) - 95)))) * 2)) - 4 / 2.', () => {
     expect(evaluate('(+.1 + (-.2) - ((1.0e+2 + (-0.5 / (2. * ((100) - 95)))) * 2)) - 4 / 2.')).toBe(-202);
+  });
+});
+
+
+describe('Build-In Custom Operators', () => {
+  test('mod', () => {
+    Parser.installedOperators.length = 0;
+    Parser.useOperator(Operator.mod as IOperator);
+    expect(1 % 0.9).toBeLessThan(0.1);
+    expect(evaluate('1 % 0.9')).toBe(0.1);
+  });
+
+  test('pow', () => {
+    Parser.installedOperators.length = 0;
+    Parser.useOperator(Operator.pow as IOperator);
+    expect(0.2 ** 3).toBeGreaterThan(0.008);
+    expect(evaluate('0.2 ** 3')).toBe(0.008);
   });
 });

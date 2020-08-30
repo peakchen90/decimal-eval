@@ -1,5 +1,5 @@
 import Big from 'big.js';
-import DecimalEval, {Parser} from './pure';
+import DecimalEval, {Operator, Parser} from './pure';
 import {IAdapter} from './transform';
 import Decimal from './decimal';
 
@@ -22,6 +22,14 @@ const defaultAdapter: IAdapter = {
 };
 
 Parser.useAdapter(defaultAdapter);
+
+// build-in custom operators
+Operator.mod = Operator.create('%', 14, (left, right) => {
+  return Number(new Big(left).mod(right));
+});
+Operator.pow = Operator.create('**', 15, (left, right) => {
+  return Number(new Big(left).pow(right));
+});
 
 export default DecimalEval;
 export * from './pure';

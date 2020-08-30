@@ -29,6 +29,7 @@ export default class Parser {
   static Node = Node
   static TokenType = TokenType
   static tokenTypes = tokenTypes
+  static installedOperators = installedOperators
 
   /**
    * 解析的字符串
@@ -238,12 +239,12 @@ export default class Parser {
 
     // 优先自定义运算符
     const operator = installedOperators.find(op => {
-      return op.code.every((c, i) => {
+      return op.codes.every((c, i) => {
         return c === this.input.charCodeAt(this.pos + i);
       });
     });
     if (operator) {
-      this.pos += operator.code.length;
+      this.pos += operator.codes.length;
       return this.finishToken(operator.type, operator.value);
     }
 

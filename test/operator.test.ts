@@ -1,12 +1,11 @@
 import {evaluate, Operator, Parser} from '../src';
-import {installedOperators} from '../src/operator';
 
 beforeEach(() => {
   // 每次执行前清空注册的运算符
-  installedOperators.length = 0;
+  Parser.installedOperators.length = 0;
 });
 
-describe('Operator', () => {
+describe('Binary Operator', () => {
   test('custom operator: `%`', () => {
     const mod = Operator.create('%', 14, (a, b) => a % b);
     Parser.useOperator(mod);
@@ -50,4 +49,13 @@ describe('Operator', () => {
       evaluate('1 % 2');
     }).toThrowError(/Expected to receive a calculation method/);
   });
+});
+
+describe('Unary Operator', () => {
+  // test('custom operator: `%`', () => {
+  //   const mod = Operator.create('%', 14, (a, b) => a % b);
+  //   Parser.useOperator(mod);
+  //   expect(evaluate('2 % 3')).toBe(2);
+  //   expect(evaluate('2 % 3 + 5')).toBe(7);
+  // });
 });
