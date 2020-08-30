@@ -30,6 +30,9 @@ Operator.mod = Operator.create('%', 14, (left, right) => {
 Operator.pow = Operator.create('**', 15, (left, right) => {
   return Number(new Big(left).pow(right));
 });
+Operator.abs = Operator.create('abs', 19, (value) => {
+  return Number(new Big(value).abs());
+}, true);
 
 export default DecimalEval;
 export * from './pure';

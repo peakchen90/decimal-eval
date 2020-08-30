@@ -1,4 +1,4 @@
-import {evaluate, Operator, Parser} from '../src';
+import {evaluate, Operator, Parser} from '../src/index';
 
 beforeEach(() => {
   // 每次执行前清空注册的运算符
@@ -6,21 +6,21 @@ beforeEach(() => {
 });
 
 describe('Binary Operator', () => {
-  test('custom operator: `%`', () => {
+  test('custom binary operator: `%`', () => {
     const mod = Operator.create('%', 14, (a, b) => a % b);
     Parser.useOperator(mod);
     expect(evaluate('2 % 3')).toBe(2);
     expect(evaluate('2 % 3 + 5')).toBe(7);
   });
 
-  test('custom operator: `**`', () => {
+  test('custom binary operator: `**`', () => {
     const mod = Operator.create('**', 15, (a, b) => Math.pow(a, b));
     Parser.useOperator(mod);
     expect(evaluate('2 ** 3')).toBe(8);
     expect(evaluate('2 ** 3 - 1')).toBe(7);
   });
 
-  test('custom operator: use a identifier', () => {
+  test('custom binary operator: use a identifier', () => {
     const mod = Operator.create('add', 13, (a, b) => a + b);
     Parser.useOperator(mod);
     expect(evaluate('2 add 3')).toBe(5);
@@ -52,10 +52,10 @@ describe('Binary Operator', () => {
 });
 
 describe('Unary Operator', () => {
-  // test('custom operator: `%`', () => {
-  //   const mod = Operator.create('%', 14, (a, b) => a % b);
-  //   Parser.useOperator(mod);
-  //   expect(evaluate('2 % 3')).toBe(2);
-  //   expect(evaluate('2 % 3 + 5')).toBe(7);
-  // });
+  test('custom unary operator: `double`', () => {
+    // const mod = Operator.create('double', 19, (v) => v * 2);
+    // Parser.useOperator(mod);
+    // expect(evaluate('double1.5')).toBe(3);
+    // expect(evaluate('double .035 * 100')).toBe(7);
+  });
 });

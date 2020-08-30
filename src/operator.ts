@@ -31,30 +31,43 @@ export function useOperator(operator: IOperator): void {
 export default class Operator {
   static mod?: IOperator;
   static pow?: IOperator
+  static abs?: IOperator
 
   /**
    * 创建运算符
    * @param value 运算符的值
    * @param precedence 优先级大小
    * @param calc 计算方法
+   * @param prefix 是否可以作为前缀（一元运算符，仅支持运算符在左侧，计算方法 `calc` 只接收一个参数）
    * @see 运算符优先级参考: https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
    */
   static create(
     value: string,
     precedence: number,
-    calc: (left: number, right: number) => number
+    calc: ((left: number, right: number) => number) | ((value: number) => number),
+    prefix = false
   ): IOperator {
     if (typeof value !== 'string' || !/^\S+$/.test(value)) {
       throw new Error('The operator should be a non-empty string');
     }
+    if (typeof precedence !== 'number' || precedence < 0) {
+      throw new Error('The precedence should be a number greater than 0');
+    }
     if (typeof calc !== 'function') {
-      throw new Error('Expected to receive a calculation method, like: `(left, right) => left + right`');
+      throw new Error(
+        `Expected to receive a calculation method, like: \`${
+          prefix
+            ? '(value) => -value'
+            : '(left, right) => left + right'
+        }\``
+      );
     }
 
     return {
       type: new TokenType(value, {
-        isOperator: true,
-        precedence
+        isBinary: !prefix,
+        prefix,
+        precedence,
       }),
       value,
       codes: value.split('').map((_, i) => value.charCodeAt(i)),

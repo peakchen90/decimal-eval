@@ -98,7 +98,7 @@ export default class Parser {
     minPrecedence: number
   ): Node {
     const precedence = this.type.precedence;
-    if (this.type.isOperator && this.type.precedence > minPrecedence) { // 比较当前运算符与上下文优先级
+    if (this.type.isBinary && this.type.precedence > minPrecedence) { // 比较当前运算符与上下文优先级
       const node = this.startNode(leftStartPos);
       const operator = this.value;
       this.next();
