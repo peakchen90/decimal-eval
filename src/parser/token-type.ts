@@ -1,3 +1,5 @@
+import Parser from './index';
+
 export interface ITokenTypeOptions {
   isBinary?: boolean; // 是否为二元元运算符
   prefix?: boolean; // 是否可以作为前缀（一元运算符，仅支持运算符在左侧）
@@ -22,6 +24,10 @@ export class TokenType {
    * @see https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
    */
   precedence: number
+  /**
+   * 读取 Token 时更新上下文
+   */
+  updateContext?: (this: Parser, prevType: TokenType) => void
 
   /**
    * constructor
@@ -47,4 +53,14 @@ export const tokenTypes = {
   div: new TokenType('/', {isBinary: true, precedence: 14}),
   prefixPlus: new TokenType('+', {prefix: true, precedence: 16}),
   prefixMinus: new TokenType('-', {prefix: true, precedence: 16})
+};
+
+tokenTypes.parenL.updateContext = function (): void {
+  this.allowPrefix = true;
+};
+tokenTypes.parenR.updateContext = function (): void {
+  this.allowPrefix = false;
+};
+tokenTypes.numeric.updateContext = function (): void {
+  this.allowPrefix = false;
 };

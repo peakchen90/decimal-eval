@@ -1,10 +1,13 @@
 import {TokenType} from './parser/token-type';
 
-export interface IOperator {
+export type BinaryCalcMethod = (left: number, right: number) => number;
+export type UnaryCalcMethod = (value: number) => number;
+
+export interface IOperator<M extends BinaryCalcMethod | UnaryCalcMethod = BinaryCalcMethod> {
   value: string;
   codes: number[];
   type: TokenType;
-  calc: (left: number, right: number) => number;
+  calc: M;
 }
 
 // 保留字符
@@ -29,28 +32,28 @@ export function useOperator(operator: IOperator): void {
 }
 
 export default class Operator {
-  static mod?: IOperator;
-  static pow?: IOperator
-  static abs?: IOperator
+  static mod?: IOperator<BinaryCalcMethod>
+  static pow?: IOperator<BinaryCalcMethod>
+  static abs?: IOperator<UnaryCalcMethod>
 
   /**
    * 创建运算符
    * @param value 运算符的值
-   * @param precedence 优先级大小
+   * @param precedence 运算符优先级
    * @param calc 计算方法
    * @param prefix 是否可以作为前缀（一元运算符，仅支持运算符在左侧，计算方法 `calc` 只接收一个参数）
    * @see 运算符优先级参考: https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
    */
-  static create(
+  static create<M extends BinaryCalcMethod | UnaryCalcMethod>(
     value: string,
     precedence: number,
-    calc: ((left: number, right: number) => number) | ((value: number) => number),
+    calc: M,
     prefix = false
-  ): IOperator {
+  ): IOperator<M> {
     if (typeof value !== 'string' || !/^\S+$/.test(value)) {
       throw new Error('The operator should be a non-empty string');
     }
-    if (typeof precedence !== 'number' || precedence < 0) {
+    if (precedence != null && (typeof precedence !== 'number' || precedence < 0)) {
       throw new Error('The precedence should be a number greater than 0');
     }
     if (typeof calc !== 'function') {
@@ -75,4 +78,3 @@ export default class Operator {
     };
   }
 }
-

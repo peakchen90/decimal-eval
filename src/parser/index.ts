@@ -1,6 +1,6 @@
 import {TokenType, tokenTypes, tokenTypes as tt} from './token-type';
 import {isNumericStart, isNumericChar, Node} from './util';
-import {installedOperators, IOperator} from '../operator';
+import {BinaryCalcMethod, installedOperators, IOperator, UnaryCalcMethod} from '../operator';
 import {IAdapter} from '../transform';
 
 /**
@@ -15,11 +15,12 @@ export default class Parser {
   end: number // 当前 Token 的结束位置
   lastTokenStart: number // 上一个 Token 的开始位置
   lastTokenEnd: number // 上一个 Token 的结束位置
+  allowPrefix: boolean // 当前上下文是否允许前缀
 
   /**
    * pubic method
    */
-  static useOperator: (operator: IOperator) => void
+  static useOperator: (operator: IOperator<BinaryCalcMethod | UnaryCalcMethod>) => void
   static evaluate: (expression: string) => number
   static useAdapter: (adapter: IAdapter) => void
 
@@ -44,6 +45,7 @@ export default class Parser {
     this.end = 0;
     this.lastTokenStart = 0;
     this.lastTokenEnd = 0;
+    this.allowPrefix = true;
   }
 
   /**
@@ -81,7 +83,7 @@ export default class Parser {
       this.expect(tt.parenR);
       return this.parseExprOp(left, leftStartPos, minPrecedence); // 将 `(expr)` 整体作为左值，进入优先级解析流程
     } else {
-      const left = this.parseMaybePrefixNumeric();
+      const left = this.parseMaybeUnary(minPrecedence);
       return this.parseExprOp(left, leftStartPos, minPrecedence); // 读取一个数字作为左值，进入优先级解析流程
     }
   }
@@ -98,7 +100,7 @@ export default class Parser {
     minPrecedence: number
   ): Node {
     const precedence = this.type.precedence;
-    if (this.type.isBinary && this.type.precedence > minPrecedence) { // 比较当前运算符与上下文优先级
+    if (this.type.isBinary && precedence > minPrecedence) { // 比较当前运算符与上下文优先级
       const node = this.startNode(leftStartPos);
       const operator = this.value;
       this.next();
@@ -120,23 +122,33 @@ export default class Parser {
   }
 
   /**
-   * 解析可能带前缀的数字节点，如: `+1`, `-2`, `3`
+   * 解析可能带前缀的表达式，如: `+1`, `-(2)`, `3`, `-(3 + 6)`
+   * @param minPrecedence 当前上下文的优先级，一元前缀表达式默认为: 99
    */
-  parseMaybePrefixNumeric(): Node {
+  parseMaybeUnary(minPrecedence = 99): Node {
+    const precedence = this.type.precedence;
     const node = this.startNode();
-    let prefix = '';
-    const pos = this.pos;
+    const start = this.pos;
     const value = this.value;
 
     // Note: `1 ++ 1` 会当作 `1 + (+1)` 对待，与 JS 会作为 `1++` 对待不同
-    if (this.type === tt.plus || this.type === tt.minus) { // with prefix `+` or `-`
-      prefix = this.value;
-      this.next();
+    if (this.type.prefix) {
+      if (!this.allowPrefix) {
+        this.unexpected(value);
+      }
+      if (precedence >= minPrecedence) { // 相同优先级的一元运算符可以连续
+        node.operator = value;
+        node.prefix = true;
+        this.next();
+        node.argument = this.parseExprAtom(this.start, precedence);
+        return this.finishNode(node, 'UnaryExpression');
+      }
     }
+
     if (this.type !== tt.numeric) {
-      this.unexpected(value, pos);
+      this.unexpected(value, start);
     }
-    node.value = prefix + this.value;
+    node.value = value;
     this.next();
     return this.finishNode(node, 'NumericLiteral');
   }
@@ -260,9 +272,15 @@ export default class Parser {
         return this.finishToken(tt.times, '*');
       case 43: // `+`
         this.pos++;
+        if (this.allowPrefix) {
+          return this.finishToken(tt.prefixPlus, '+');
+        }
         return this.finishToken(tt.plus, '+');
       case 45: // `-`
         this.pos++;
+        if (this.allowPrefix) {
+          return this.finishToken(tt.prefixMinus, '-');
+        }
         return this.finishToken(tt.minus, '-');
       case 47: // `/`
         this.pos++;
@@ -278,9 +296,25 @@ export default class Parser {
    * @param value
    */
   finishToken(type: TokenType, value = ''): void {
+    const prevType = this.type;
     this.end = this.pos;
     this.type = type;
     this.value = value;
+
+    this.updateContext(prevType);
+  }
+
+  /**
+   * 读取 Token 完成后更新上下文
+   * @param prevType
+   */
+  updateContext(prevType: TokenType): void {
+    const type = this.type;
+    if (type.isBinary || type.prefix) {
+      this.allowPrefix = true;
+    } else if (type.updateContext) {
+      type.updateContext.call(this, prevType);
+    }
   }
 
   /**

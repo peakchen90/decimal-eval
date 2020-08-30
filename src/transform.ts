@@ -1,8 +1,8 @@
 import {Node} from './parser/util';
-import {installedOperators} from './operator';
+import {installedOperators, IOperator, UnaryCalcMethod} from './operator';
 
 /**
- * 计算方法适配
+ * 二元表达式计算方法适配器
  */
 export interface IAdapter {
   '+': (left: number, right: number) => number;
@@ -12,12 +12,13 @@ export interface IAdapter {
 }
 
 /**
- * 计算
+ * 二元表达式计算
+ * @param adapter
  * @param left
  * @param right
  * @param operator
  */
-export function calc(
+export function binaryCalculation(
   adapter: IAdapter,
   left: number,
   right: number,
@@ -30,13 +31,38 @@ export function calc(
     case '/':
       return adapter[operator](left, right);
     default:
-      const customOperator = installedOperators.find(op => op.value === operator);
+      const customOperator = installedOperators.find(op => {
+        return op.type.isBinary && op.value === operator;
+      });
       if (customOperator) {
         return customOperator.calc(left, right);
       }
   }
   /* istanbul ignore next */
-  throw new Error(`Unexpected operator: ${operator}`);
+  throw new Error(`Unexpected binary operator: ${operator}`);
+}
+
+/**
+ * 一元表达式计算
+ * @param value
+ * @param operator
+ */
+export function unaryCalculation(value: number, operator: string): number {
+  switch (operator) {
+    case '+':
+      return value;
+    case '-':
+      return -value;
+    default:
+      const customOperator = installedOperators.find(op => {
+        return op.type.prefix && op.value === operator;
+      }) as IOperator<UnaryCalcMethod>;
+      if (customOperator) {
+        return customOperator.calc(value);
+      }
+  }
+  /* istanbul ignore next */
+  throw new Error(`Unexpected unary operator: ${operator}`);
 }
 
 /**
@@ -45,23 +71,26 @@ export function calc(
  */
 export function transform(node: Node | number, adapter: IAdapter): Node | number {
   if (node instanceof Node) {
-    if (node.type === 'Expression') {
-      return transform(node.expression, adapter);
+    switch (node.type) {
+      case 'Expression':
+        return transform(node.expression, adapter);
+      case 'BinaryExpression':
+        return binaryCalculation(
+          adapter,
+          transform(node.left, adapter) as number,
+          transform(node.right, adapter) as number,
+          node.operator
+        );
+      case 'UnaryExpression':
+        return unaryCalculation(
+          transform(node.argument, adapter) as number,
+          node.operator
+        );
+      case 'NumericLiteral':
+        return Number(node.value);
+      default:
+        throw new Error(`Unexpected type: ${node.type}`);
     }
-    if (node.type === 'BinaryExpression') {
-      return calc(
-        adapter,
-        transform(node.left, adapter) as number,
-        transform(node.right, adapter) as number,
-        node.operator
-      );
-    }
-    if (node.type === 'NumericLiteral') {
-      return Number(node.value);
-    }
-    /* istanbul ignore next */
-    throw new Error(`Unexpected type: ${node.type}`);
   }
-  return node;
+  return Number(node);
 }
-
