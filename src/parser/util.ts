@@ -1,8 +1,10 @@
+export type NodeType = 'Expression' | 'BinaryExpression' | 'UnaryExpression' | 'NumericLiteral' | string
+
 /**
  * AST 节点
  */
 export class Node {
-  type: string
+  type: NodeType
   start: number
   end: number
 
