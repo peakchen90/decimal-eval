@@ -26,8 +26,8 @@ describe('Cache AST Fixtures', () => {
     });
   });
 
-  test('+1*(-.2-+3.e4)', () => {
-    const {expr} = transformPlaceholder('+1*(-2-+3)');
+  test('+1*(-.2-+3.e+4)', () => {
+    const {expr} = transformPlaceholder('+1*(-.2-+3.e+4)');
     expect(new Parser(expr).parse()).toMatchObject({
       'type': 'Expression',
       'expression': {
@@ -87,7 +87,7 @@ describe('Cache Evaluate', () => {
         }
       }
     });
-    expect(evaluate('0.2+2e2')).toBe(200.2);
+    expect(evaluate('1.e-3+2e2')).toBe(200.001);
     expect(Object.keys(Parser._cache._cache).length).toBe(1);
   });
 });
