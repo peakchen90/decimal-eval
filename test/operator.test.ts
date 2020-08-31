@@ -27,19 +27,24 @@ describe('Binary Operator', () => {
   });
 
   test('cannot use reserved character as operator', () => {
-    const add = Operator.create('+', 13, (a, b) => a + b);
     expect(() => {
-      Parser.useOperator(add);
-    }).toThrowError(/Cannot use reserved character/);
+      Operator.create('+', 13, (a, b) => a + b)
+    }).toThrowError(/The custom operator cannot use reserved character/);
   });
 
   test('invalid operator', () => {
     expect(() => {
       Operator.create('', 0, (a, b) => a + b);
-    }).toThrowError(/The operator should be a non-empty string/);
+    }).toThrowError(/The custom operator should be a non-empty string/);
     expect(() => {
       Operator.create(' * ', 0, (a, b) => a + b);
-    }).toThrowError(/The operator should be a non-empty string/);
+    }).toThrowError(/The custom operator should be a non-empty string/);
+    expect(() => {
+      Operator.create('.', 0, (a, b) => a + b);
+    }).toThrowError(/The custom operator cannot start with a possible number/);
+    expect(() => {
+      Operator.create('5', 0, (a, b) => a + b);
+    }).toThrowError(/The custom operator cannot start with a possible number/);
   });
 
   test('missing calculation method', () => {

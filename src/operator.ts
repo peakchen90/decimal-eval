@@ -1,4 +1,5 @@
 import {TokenType} from './parser/token-type';
+import {isNumericStart} from './parser/util';
 
 export type BinaryCalcMethod = (left: number, right: number) => number;
 export type UnaryCalcMethod = (value: number) => number;
@@ -23,11 +24,8 @@ export const installedOperators: IOperator[] = [];
  * @param operator
  */
 export function useOperator(operator: IOperator): void {
-  if (reserved.includes(operator.value)) {
-    throw new Error(`Cannot use reserved character, including: ${reserved.join(', ')}`);
-  }
   if (!installedOperators.includes(operator)) {
-    installedOperators.unshift(operator); // 注册相同运算符，保证后面的运算符覆盖前面的
+    installedOperators.unshift(operator); // 注册相同运算符，保证后面注册的覆盖前面的
   }
 }
 
@@ -51,7 +49,13 @@ export default class Operator {
     isPrefix = false
   ): IOperator<M> {
     if (typeof value !== 'string' || !/^\S+$/.test(value)) {
-      throw new Error('The operator should be a non-empty string');
+      throw new Error('The custom operator should be a non-empty string');
+    }
+    if (reserved.includes(value)) {
+      throw new Error(`The custom operator cannot use reserved character, including: ${reserved.join(', ')}`);
+    }
+    if (isNumericStart(value.charCodeAt(0))) {
+      throw new Error('The custom operator cannot start with a possible number, including: `.`, 0-9');
     }
     if (precedence != null && (typeof precedence !== 'number' || precedence < 0)) {
       throw new Error('The precedence should be a number greater than 0');

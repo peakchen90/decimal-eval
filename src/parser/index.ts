@@ -245,12 +245,18 @@ export default class Parser {
   readTokenFromCode(): void {
     const code = this.input.charCodeAt(this.pos);
 
-    // 优先自定义运算符
-    const operator = installedOperators.find(op => {
-      return op.codes.every((c, i) => {
-        return c === this.input.charCodeAt(this.pos + i);
-      });
-    });
+    // 优先解析自定义运算符
+    let operator, i, j;
+    for (i = 0; i < installedOperators.length; i++) {
+      const op = installedOperators[i];
+      for (j = 0; j < op.codes.length; j++) {
+        if (op.codes[j] !== this.input.charCodeAt(this.pos + j)) break;
+      }
+      if (j === op.codes.length) {
+        operator = op;
+        break;
+      }
+    }
     if (operator) {
       this.pos += operator.codes.length;
       return this.finishToken(operator.type, operator.value);
