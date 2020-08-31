@@ -1,7 +1,12 @@
 import {TokenType, tokenTypes, tokenTypes as tt} from './token-type';
-import {isNumericStart, isNumericChar, Node} from './util';
+import {isNumericStart, isNumericChar, Node, NodeType} from './util';
 import {BinaryCalcMethod, installedOperators, IOperator, UnaryCalcMethod} from '../operator';
 import {IAdapter} from '../transform';
+import cache from './cache';
+
+export interface IParserConfig {
+  cache?: boolean;
+}
 
 /**
  * AST Parser
@@ -17,20 +22,22 @@ export default class Parser {
   lastTokenEnd: number // 上一个 Token 的结束位置
   allowPrefix: boolean // 当前上下文是否允许前缀
 
-  /**
-   * pubic method
-   */
+  // pubic method
   static useOperator: (operator: IOperator<BinaryCalcMethod | UnaryCalcMethod>) => void
   static evaluate: (expression: string) => number
   static useAdapter: (adapter: IAdapter) => void
 
-  /**
-   * internal
-   */
+  // global config
+  static config: IParserConfig = {
+    cache: false
+  }
+
+  // internal
   static Node = Node
   static TokenType = TokenType
   static tokenTypes = tokenTypes
-  static installedOperators = installedOperators
+  static _installedOperators = installedOperators
+  static _cache = cache
 
   /**
    * 解析的字符串
@@ -141,12 +148,19 @@ export default class Parser {
       }
     }
 
-    if (this.type !== tt.numeric) {
-      this.unexpected(value, start);
+    if (this.type === tt.numeric) {
+      node.value = value;
+      this.next();
+      return this.finishNode(node, 'NumericLiteral');
     }
-    node.value = value;
-    this.next();
-    return this.finishNode(node, 'NumericLiteral');
+
+    if (Parser.config.cache && this.type === tt.placeholder) {
+      node.placeholder = value;
+      this.next();
+      return this.finishNode(node, 'Placeholder');
+    }
+
+    return this.unexpected(value, start) as any;
   }
 
   /**
@@ -200,10 +214,10 @@ export default class Parser {
           if (allowE && !(lastCode === 46 && isSingleChar())) { // 单字符 `.` 后不能跟 `E`
             allowE = false;
             allowDot = false;
-            const aheadCode = this.input.charCodeAt(this.pos + 1);
-            if (aheadCode === 43 || aheadCode === 45) { // `+` / `-`
+            const nextCode = this.input.charCodeAt(this.pos + 1);
+            if (nextCode === 43 || nextCode === 45) { // `+` / `-`
               this.pos++;
-              lastCode = aheadCode;
+              lastCode = nextCode;
               lastChar = this.input[this.pos];
             }
           } else {
@@ -262,6 +276,8 @@ export default class Parser {
       return this.finishToken(operator.type, operator.value);
     }
 
+    let nextCode;
+
     switch (code) {
       case 40: // `(`
         this.pos++;
@@ -287,9 +303,34 @@ export default class Parser {
       case 47: // `/`
         this.pos++;
         return this.finishToken(tt.div, '/');
+      case 63: // `?`
+        if (Parser.config.cache) {
+          nextCode = this.input.charCodeAt(this.pos + 1); // // `?n` is a placeholder
+          if (nextCode >= 48 && nextCode <= 57) { // 0-9
+            return this.readPlaceholder();
+          }
+        }
       default:
         this.unexpected(this.input[this.pos]);
     }
+  }
+
+  /**
+   * 读取一个占位符 Token
+   */
+  readPlaceholder(): void {
+    const chunkStart = this.pos;
+    this.pos++;
+    while (this.pos < this.input.length) {
+      const code = this.input.charCodeAt(this.pos);
+      if (code >= 48 && code <= 57) {
+        this.pos++;
+      } else {
+        break;
+      }
+    }
+    const value = this.input.slice(chunkStart, this.pos);
+    this.finishToken(tt.placeholder, value);
   }
 
   /**
@@ -331,7 +372,7 @@ export default class Parser {
    * @param node
    * @param type
    */
-  finishNode(node: Node, type: string): Node {
+  finishNode(node: Node, type: NodeType): Node {
     node.type = type;
     node.end = this.lastTokenEnd;
     return node;

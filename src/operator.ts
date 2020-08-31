@@ -54,8 +54,11 @@ export default class Operator {
     if (reserved.includes(value)) {
       throw new Error(`The custom operator cannot use reserved character, including: ${reserved.join(', ')}`);
     }
-    if (isNumericStart(value.charCodeAt(0))) {
+    if (isNumericStart(value.charCodeAt(0))) { // 0-9, `.`
       throw new Error('The custom operator cannot start with a possible number, including: `.`, 0-9');
+    }
+    if (value.charCodeAt(0) === 63) { // `?`
+      throw new Error('The custom operator cannot start with `?`');
     }
     if (precedence != null && (typeof precedence !== 'number' || precedence < 0)) {
       throw new Error('The precedence should be a number greater than 0');

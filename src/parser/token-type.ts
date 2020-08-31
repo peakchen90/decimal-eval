@@ -47,6 +47,7 @@ export const tokenTypes = {
   parenR: new TokenType(')'),
   end: new TokenType('end'),
   numeric: new TokenType('numeric'),
+  placeholder: new TokenType('?n'),
   plus: new TokenType('+', {isBinary: true, precedence: 13}),
   minus: new TokenType('-', {isBinary: true, precedence: 13}),
   times: new TokenType('*', {isBinary: true, precedence: 14}),
@@ -62,5 +63,8 @@ tokenTypes.parenR.updateContext = function (): void {
   this.allowPrefix = false;
 };
 tokenTypes.numeric.updateContext = function (): void {
+  this.allowPrefix = false;
+};
+tokenTypes.placeholder.updateContext = function (): void {
   this.allowPrefix = false;
 };

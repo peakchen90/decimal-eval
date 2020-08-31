@@ -69,26 +69,34 @@ export function unaryCalculation(value: number, operator: string): number {
  * 转换 AST -> 计算结果
  * @param node
  * @param adapter
+ * @param placeholderMap
  */
-export function transform(node: Node | number, adapter: IAdapter): Node | number {
+export function transform(node: Node | number, adapter: IAdapter, placeholderMap: Record<string, string> = {}): Node | number {
   if (node instanceof Node) {
+    let placeholder;
     switch (node.type) {
       case 'Expression':
-        return transform(node.expression, adapter);
+        return transform(node.expression, adapter, placeholderMap);
       case 'BinaryExpression':
         return binaryCalculation(
           adapter,
-          transform(node.left, adapter) as number,
-          transform(node.right, adapter) as number,
+          transform(node.left, adapter, placeholderMap) as number,
+          transform(node.right, adapter, placeholderMap) as number,
           node.operator
         );
       case 'UnaryExpression':
         return unaryCalculation(
-          transform(node.argument, adapter) as number,
+          transform(node.argument, adapter, placeholderMap) as number,
           node.operator
         );
       case 'NumericLiteral':
         return Number(node.value);
+      case 'Placeholder':
+        placeholder = placeholderMap[node.placeholder];
+        if (!placeholder) {
+          throw new Error(`The placeholder ${node.placeholder} not found`);
+        }
+        return Number(placeholder);
       default:
         /* istanbul ignore next */
         throw new Error(`Unexpected type: ${node.type}`);

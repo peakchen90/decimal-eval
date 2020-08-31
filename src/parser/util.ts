@@ -1,4 +1,6 @@
-export type NodeType = 'Expression' | 'BinaryExpression' | 'UnaryExpression' | 'NumericLiteral' | string
+export type NodeType =
+  'Expression' | 'BinaryExpression' | 'UnaryExpression'
+  | 'NumericLiteral' | 'Placeholder' | string
 
 /**
  * AST 节点

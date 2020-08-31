@@ -2,7 +2,7 @@ import {evaluate, Operator, Parser} from '../src/index';
 
 beforeEach(() => {
   // 每次执行前清空注册的运算符
-  Parser.installedOperators.length = 0;
+  Parser._installedOperators.length = 0;
 });
 
 describe('Binary Operator', () => {
@@ -28,7 +28,7 @@ describe('Binary Operator', () => {
 
   test('cannot use reserved character as operator', () => {
     expect(() => {
-      Operator.create('+', 13, (a, b) => a + b)
+      Operator.create('+', 13, (a, b) => a + b);
     }).toThrowError(/The custom operator cannot use reserved character/);
   });
 

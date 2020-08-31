@@ -39,21 +39,21 @@ describe('Evaluate', () => {
 
 describe('Build-In Custom Operators', () => {
   test('mod', () => {
-    Parser.installedOperators.length = 0;
+    Parser._installedOperators.length = 0;
     Parser.useOperator(Operator.mod as IOperator);
     expect(1 % 0.9).toBeLessThan(0.1);
     expect(evaluate('1 % 0.9')).toBe(0.1);
   });
 
   test('pow', () => {
-    Parser.installedOperators.length = 0;
+    Parser._installedOperators.length = 0;
     Parser.useOperator(Operator.pow as IOperator);
     expect(0.2 ** 3).toBeGreaterThan(0.008);
     expect(evaluate('0.2 ** 3')).toBe(0.008);
   });
 
   test('abs', () => {
-    Parser.installedOperators.length = 0;
+    Parser._installedOperators.length = 0;
     Parser.useOperator(Operator.abs as IOperator);
     expect(evaluate('abs -1.5')).toBe(1.5);
   });
