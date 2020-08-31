@@ -386,7 +386,7 @@ export default class Parser {
    * @param pos
    */
   unexpected(token = '', pos?: number): void {
-    this.raise(pos ?? this.start, `Unexpected token: \`${token}\``);
+    this.raise(pos ?? this.start, `Unexpected token ${token}`);
   }
 
   /**

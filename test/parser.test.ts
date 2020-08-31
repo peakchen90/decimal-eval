@@ -38,51 +38,51 @@ describe('Parser Error Capture', () => {
   test('unexpected token in the end', () => {
     expect(() => {
       new Parser('1+').parse();
-    }).toThrowError(/Unexpected end of input/);
+    }).toThrowError('Unexpected end of input');
   });
 
   test('unexpected token when read numeric with prefix', () => {
     expect(() => {
       new Parser('1++)+1').parse();
-    }).toThrowError(/at position 3/);
+    }).toThrowError('Unexpected token ) at position 3');
   });
 
   test('unexpected token: `e`', () => {
     expect(() => {
       new Parser('1e2e3').parse();
-    }).toThrowError(/at position 3/);
+    }).toThrowError('Unexpected token e at position 3');
     expect(() => {
       new Parser('1e').parse();
-    }).toThrowError(/at position 1/);
+    }).toThrowError('Unexpected token e at position 1');
     expect(() => {
       new Parser('.E').parse();
-    }).toThrowError(/at position 1/);
+    }).toThrowError('Unexpected token E at position 1');
   });
 
   test('unexpected token: `.`', () => {
     expect(() => {
       new Parser('1.2.3').parse();
-    }).toThrowError(/at position 3/);
+    }).toThrowError('Unexpected token . at position 3');
     expect(() => {
       new Parser('.').parse();
-    }).toThrowError(/at position 0/);
+    }).toThrowError('Unexpected token . at position 0');
   });
 
   test('unexpected token: extra `)`', () => {
     expect(() => {
       new Parser('1+(2+3))').parse();
-    }).toThrowError(/at position 7/);
+    }).toThrowError('Unexpected token ) at position 7');
   });
 
   test('unexpected token: missing `)`', () => {
     expect(() => {
       new Parser('(2+3 3').parse();
-    }).toThrowError(/at position 5/);
+    }).toThrowError('Unexpected token 3 at position 5');
   });
 
   test('unexpected token: unknown character', () => {
     expect(() => {
       new Parser('1^2').parse();
-    }).toThrowError(/at position 1/);
+    }).toThrowError('Unexpected token ^ at position 1');
   });
 });
