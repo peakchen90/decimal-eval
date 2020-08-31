@@ -93,6 +93,7 @@ export function transform(node: Node | number, adapter: IAdapter, placeholderMap
         return Number(node.value);
       case 'Placeholder':
         placeholder = placeholderMap[node.placeholder];
+        /* istanbul ignore next */
         if (!placeholder) {
           throw new Error(`The placeholder ${node.placeholder} not found`);
         }

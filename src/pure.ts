@@ -24,7 +24,7 @@ function evaluate(expression: string): number {
     if (cache.get(expr)) {
       node = cache.get(expr);
     } else {
-      node = new Parser(expression).parse();
+      node = new Parser(expr).parse();
       cache.set(expr, node);
     }
   } else {

@@ -46,6 +46,9 @@ describe('Binary Operator', () => {
       Operator.create('5', 0, (a, b) => a + b);
     }).toThrowError(/The custom operator cannot start with a possible number/);
     expect(() => {
+      Operator.create('?', 0, (a, b) => a + b);
+    }).toThrowError(/The custom operator cannot start with `?`/);
+    expect(() => {
       Operator.create('%', -1, (a, b) => a + b);
     }).toThrowError(/The precedence should be a number greater than 0/);
   });

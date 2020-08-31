@@ -12,11 +12,14 @@ export function transformPlaceholder(expression: string): {
 } {
   const map = {};
   let i = 0;
+  let placeholder;
   const expr = String(expression).replace(numericRegexp, (match) => {
     if (match.charCodeAt(0) === 63) { // 表达式存在 `?n`
       throw new Error('The expression cannot contain `?n`, this is reserved');
     }
-    return map[`?${++i}`] = match;
+    placeholder = `?${++i}`;
+    map[placeholder] = match;
+    return placeholder;
   }).replace(/\s/g, '');
   return {map, expr};
 }
