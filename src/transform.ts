@@ -71,7 +71,11 @@ export function unaryCalculation(value: number, operator: string): number {
  * @param adapter
  * @param placeholderMap
  */
-export function transform(node: Node | number, adapter: IAdapter, placeholderMap: Record<string, string> = {}): Node | number {
+export function transform(
+  node: Node | number,
+  adapter: IAdapter,
+  placeholderMap: Record<string, string> = {}
+): Node | number {
   if (node instanceof Node) {
     let placeholder;
     switch (node.type) {

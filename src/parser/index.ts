@@ -2,7 +2,7 @@ import {TokenType, tokenTypes, tokenTypes as tt} from './token-type';
 import {isNumericStart, isNumericChar, Node, NodeType} from './util';
 import {BinaryCalcMethod, installedOperators, IOperator, UnaryCalcMethod} from '../operator';
 import {IAdapter} from '../transform';
-import cache from './cache';
+import cache, {ICache} from './cache';
 
 export interface IParserConfig {
   cache?: boolean;
@@ -36,8 +36,8 @@ export default class Parser {
   static Node = Node
   static TokenType = TokenType
   static tokenTypes = tokenTypes
-  static _installedOperators = installedOperators
-  static _cache = cache
+  static _installedOperators: IOperator[] = installedOperators
+  static _cache: ICache = cache
 
   /**
    * 解析的字符串
