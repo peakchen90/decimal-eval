@@ -1,6 +1,6 @@
 import {Node} from './util';
 
-const numericRegexp = /\??(\.\d+([eE][+-]?\d+)?|\d+(\.\d*)?([eE][+-]?\d+)?)/g;
+const numericRegexp = /\??(\.\d+|\d+(\.\d*)?)([eE][+-]?\d+)?/g;
 
 /**
  * 用占位符转换

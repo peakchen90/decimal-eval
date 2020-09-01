@@ -1,12 +1,12 @@
 import {evaluate, Parser} from '../src/pure';
 import {IAdapter} from '../src/transform';
 
-
 describe('Pure', () => {
-  test('evaluate with no adapter', () => {
-    expect(() => {
-      evaluate('1 + 2');
-    }).toThrowError(/to set the calculation adapter/);
+  test('evaluate with default adapter', () => {
+    expect(evaluate('0.1 + 0.2')).toBeGreaterThan(0.3);
+    expect(evaluate('3 - 5')).toBe(-2);
+    expect(evaluate('2 * 4')).toBe(8);
+    expect(evaluate('20 / 2')).toBe(10);
   });
 
   test('useAdapter: missing adapter', () => {

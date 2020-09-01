@@ -31,11 +31,11 @@ export function binaryCalculation(
     case '/':
       return adapter[operator](left, right);
     default:
-      const customOperator = installedOperators.find(op => {
-        return op.type.isBinary && op.value === operator;
-      });
-      if (customOperator) {
-        return customOperator.calc(left, right);
+      for (let i = 0; i < installedOperators.length; i++) {
+        const op = installedOperators[i];
+        if (op.type.isBinary && op.value === operator) {
+          return op.calc(left, right);
+        }
       }
   }
   /* istanbul ignore next */
@@ -54,11 +54,11 @@ export function unaryCalculation(value: number, operator: string): number {
     case '-':
       return -value;
     default:
-      const customOperator = installedOperators.find(op => {
-        return op.type.isPrefix && op.value === operator;
-      }) as IOperator<UnaryCalcMethod>;
-      if (customOperator) {
-        return customOperator.calc(value);
+      for (let i = 0; i < installedOperators.length; i++) {
+        const op = installedOperators[i] as IOperator<UnaryCalcMethod>;
+        if (op.type.isPrefix && op.value === operator) {
+          return op.calc(value);
+        }
       }
   }
   /* istanbul ignore next */

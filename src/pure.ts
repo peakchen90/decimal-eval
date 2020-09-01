@@ -6,17 +6,18 @@ import cache, {transformPlaceholder} from './parser/cache';
 declare const __VERSION__: string;
 
 // 计算方法适配
-let _adapter: IAdapter;
+let _adapter: IAdapter = {
+  '+': (left, right) => left + right,
+  '-': (left, right) => left - right,
+  '*': (left, right) => left * right,
+  '/': (left, right) => left / right
+};
 
 /**
  * 计算表达式
  * @param expression
  */
 function evaluate(expression: string): number {
-  if (!_adapter) {
-    throw new Error('Please pass the `Parser.useAdapter()` method to set the calculation adapter firstly.');
-  }
-
   let placeholderMap, node;
   if (Parser.config.cache) {
     const {map, expr} = transformPlaceholder(expression);
