@@ -25,7 +25,8 @@ and automatically fix JS decimal precision by [big.js](https://github.com/MikeMc
 import {evaluate} from 'decimal-eval';
 
 evaluate('0.1 + 0.2') // 0.3
-evaluate('100 * (0.08 - 0.01)') // 7
+evaluate('100 * (0.08 - 0.01)'); // 7
+evaluate('1 + abc', { abc: 2 }); // 3
 ```
 
 In addition to the above operators, it also supports custom operator expansion,
@@ -54,11 +55,13 @@ evaluate('1 add sin -2') // 0.09070257317431829
 ```
 
 ## API
-### `evaluate(expression: string): number`
+### `evaluate(expression: string, scope?: Record<string, number>): number`
 Parse and calculate arithmetic expression.
 ```js
 import {evaluate} from 'decimal-eval';
-evaluate('1 + 2');
+
+evaluate('1 + 2'); // 3
+evaluate('1 + abc', { abc: 2 }); // 3
 ```
 
 ### Operator
@@ -78,7 +81,19 @@ const absOp = Operator.create('abs', 16, (value) => Math.abs(value), true);
 Parse arithmetic expressions.
 ```js
 import {Parser} from 'decimal-eval';
+
 const ast = new Parser('1 + 2').parse();
+```
+
+#### `new Parser(expression: string).compile(): (scope) => number`
+Compile and cache expression.
+```js
+import {Parser} from 'decimal-eval';
+
+const evaluate = new Parser('1 + abc');
+evaluate({ abc: 2 }); // 3
+evaluate({ abc: 9 }); // 10
+evaluate({ def: 1 }); // throw error
 ```
 
 #### `Parser.useOperator(operator)`
