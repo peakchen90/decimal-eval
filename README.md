@@ -35,12 +35,12 @@ The operator precedence according to: [MDN operator precedence](https://develope
 ```js
 import {evaluate, Parser, Operator} from 'decimal-eval';
 
-// create custom operator `add`, the precedence is 13
+// create binary operator `add`, the precedence is 13
 const addOp = Operator.create('add', 13, (left, right) => {
   return left + right;
 });
 
-// create custom operator `sin`, the precedence is 16
+// create unary operator `sin`, the precedence is 16
 const sinOp = Operator.create('sin', 16, (value) => {
   return Math.sin(value);
 }, true);

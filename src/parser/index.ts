@@ -1,7 +1,7 @@
 import {TokenType, tokenTypes, tokenTypes as tt} from './token-type';
-import {isNumericStart, isNumericChar, Node, NodeType} from './util';
+import {isNumericStart, isNumericChar, Node, NodeType, isScopeStart, isScopeChar} from './util';
 import {BinaryCalcMethod, installedOperators, IOperator, UnaryCalcMethod} from '../operator';
-import {IAdapter} from '../transform';
+import {IAdapter, transform} from '../transform';
 
 /**
  * AST Parser
@@ -17,12 +17,15 @@ export default class Parser {
   lastTokenEnd: number // 上一个 Token 的结束位置
   allowPrefix: boolean // 当前上下文是否允许前缀
 
-  // pubic method
+  // private properties
+  private _cacheNode: Node | null | undefined
+
+  // pubic static method
   static useOperator: (operator: IOperator<BinaryCalcMethod | UnaryCalcMethod>) => void
   static evaluate: (expression: string) => number
   static useAdapter: (adapter: IAdapter) => void
 
-  // internal
+  // static internal
   static Node = Node
   static TokenType = TokenType
   static tokenTypes = tokenTypes
@@ -48,15 +51,33 @@ export default class Parser {
    * 开始解析，如果是空字符串返回 `null`
    */
   parse(): Node | null {
+    if (this._cacheNode !== undefined) {
+      return this._cacheNode;
+    }
+
     this.next();
     const node = this.startNode(this.start);
-    if (this.type === tt.end) return null; // 空字符
+    if (this.type === tt.end) {
+      return this._cacheNode = null; // 空字符
+    }
 
     node.expression = this.parseExpression();
     if (this.type !== tt.end) { // 其后遇到其他非法字符
       this.unexpected(this.value);
     }
-    return this.finishNode(node, 'Expression');
+    this._cacheNode = this.finishNode(node, 'Expression');
+    return this._cacheNode;
+  }
+
+  /**
+   * 编译表达式
+   */
+  compile(): (scope?: Record<string, number>) => number {
+    const node = this.parse();
+    return (scope?: Record<string, number>): number => {
+      if (!node) return 0;
+      return transform(node, scope ?? {}) as number;
+    };
   }
 
   /**
@@ -143,11 +164,11 @@ export default class Parser {
       return this.finishNode(node, 'NumericLiteral');
     }
 
-    // if (Parser.config.cache && this.type === tt.placeholder) {
-    //   node.placeholder = value;
-    //   this.next();
-    //   return this.finishNode(node, 'Placeholder');
-    // }
+    if (this.type === tt.scope) {
+      node.value = value;
+      this.next();
+      return this.finishNode(node, 'ScopeVariable');
+    }
 
     return this.unexpected(value, start) as any;
   }
@@ -292,35 +313,31 @@ export default class Parser {
       case 47: // `/`
         this.pos++;
         return this.finishToken(tt.div, '/');
-      case 63: // `?`
-        // if (Parser.config.cache) {
-        //   nextCode = this.input.charCodeAt(this.pos + 1); // // `?n` is a placeholder
-        //   if (nextCode >= 48 && nextCode <= 57) { // 0-9
-        //     return this.readPlaceholder();
-        //   }
-        // }
       default:
-        this.unexpected(this.input[this.pos]);
+        if (isScopeStart(code)) {
+          return this.readScopeToken();
+        }
     }
+
+    this.unexpected(this.input[this.pos]);
   }
 
   /**
-   * 读取一个占位符 Token
+   * 读取一个 scope 变量 Token
    */
-  // readPlaceholder(): void {
-  //   const chunkStart = this.pos;
-  //   this.pos++;
-  //   while (this.pos < this.input.length) {
-  //     const code = this.input.charCodeAt(this.pos);
-  //     if (code >= 48 && code <= 57) {
-  //       this.pos++;
-  //     } else {
-  //       break;
-  //     }
-  //   }
-  //   const value = this.input.slice(chunkStart, this.pos);
-  //   this.finishToken(tt.placeholder, value);
-  // }
+  readScopeToken(): void {
+    const chunkStart = this.pos;
+    while (this.pos < this.input.length) {
+      const code = this.input.charCodeAt(this.pos);
+      if (isScopeChar(code)) {
+        this.pos++;
+      } else {
+        break;
+      }
+    }
+    const value = this.input.slice(chunkStart, this.pos);
+    this.finishToken(tt.scope, value);
+  }
 
   /**
    * 完善一个 Token

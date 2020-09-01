@@ -11,15 +11,36 @@ export interface IAdapter {
   '/': (left: number, right: number) => number;
 }
 
+// 计算方法适配
+export let _adapter: IAdapter = {
+  '+': (left, right) => left + right,
+  '-': (left, right) => left - right,
+  '*': (left, right) => left * right,
+  '/': (left, right) => left / right
+};
+
+/**
+ * 使用指定的计算方法适配器用于计算值
+ * @param adapter
+ */
+export function useAdapter(adapter: IAdapter): void {
+  const baseOperators = ['+', '-', '*', '/'];
+  adapter = adapter || ({} as IAdapter);
+  baseOperators.forEach(op => {
+    if (typeof adapter[op] !== 'function') {
+      throw new Error(`Missing method for calculation operator \`${op}\``);
+    }
+  });
+  _adapter = adapter;
+}
+
 /**
  * 二元表达式计算
- * @param adapter
  * @param left
  * @param right
  * @param operator
  */
 export function binaryCalculation(
-  adapter: IAdapter,
   left: number,
   right: number,
   operator: string
@@ -29,7 +50,7 @@ export function binaryCalculation(
     case '-':
     case '*':
     case '/':
-      return adapter[operator](left, right);
+      return _adapter[operator](left, right);
     default:
       for (let i = 0; i < installedOperators.length; i++) {
         const op = installedOperators[i];
@@ -68,39 +89,33 @@ export function unaryCalculation(value: number, operator: string): number {
 /**
  * 转换 AST -> 计算结果
  * @param node
- * @param adapter
- * @param placeholderMap
+ * @param scope
  */
-export function transform(
-  node: Node | number,
-  adapter: IAdapter,
-  placeholderMap: Record<string, string> = {}
-): Node | number {
+export function transform(node: Node | number, scope: Record<string, number> = {}): Node | number {
   if (node instanceof Node) {
-    let placeholder;
+    let scopeValue;
     switch (node.type) {
       case 'Expression':
-        return transform(node.expression, adapter, placeholderMap);
+        return transform(node.expression, scope);
       case 'BinaryExpression':
         return binaryCalculation(
-          adapter,
-          transform(node.left, adapter, placeholderMap) as number,
-          transform(node.right, adapter, placeholderMap) as number,
+          transform(node.left, scope) as number,
+          transform(node.right, scope) as number,
           node.operator
         );
       case 'UnaryExpression':
         return unaryCalculation(
-          transform(node.argument, adapter, placeholderMap) as number,
+          transform(node.argument, scope) as number,
           node.operator
         );
       case 'NumericLiteral':
         return Number(node.value);
-      // case 'Placeholder':
-      //   placeholder = placeholderMap[node.placeholder];
-      //   if (placeholder == null) {
-      //     throw new Error(`The placeholder ${node.placeholder} not found`);
-      //   }
-      //   return Number(placeholder);
+      case 'ScopeVariable':
+        scopeValue = scope[node.value];
+        if (scopeValue === undefined) {
+          throw new Error(`The scope ${node.value} corresponding value was not found`);
+        }
+        return Number(scopeValue);
       default:
         /* istanbul ignore next */
         throw new Error(`Unexpected type: ${node.type}`);
