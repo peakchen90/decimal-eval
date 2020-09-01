@@ -110,10 +110,10 @@ export function transform(node: Node | number, scope: Record<string, number> = {
         );
       case 'NumericLiteral':
         return Number(node.value);
-      case 'ScopeVariable':
-        scopeValue = scope[node.value];
+      case 'Identifier':
+        scopeValue = scope[node.name];
         if (scopeValue === undefined) {
-          throw new Error(`The scope ${node.value} corresponding value was not found`);
+          throw new Error(`The scope \`${node.name}\` corresponding value was not found`);
         }
         return Number(scopeValue);
       default:

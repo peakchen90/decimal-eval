@@ -47,7 +47,7 @@ export const tokenTypes = {
   parenR: new TokenType(')'),
   end: new TokenType('end'),
   numeric: new TokenType('numeric'),
-  scope: new TokenType('scope'),
+  identifier: new TokenType('identifier'),
   plus: new TokenType('+', {isBinary: true, precedence: 13}),
   minus: new TokenType('-', {isBinary: true, precedence: 13}),
   times: new TokenType('*', {isBinary: true, precedence: 14}),
@@ -65,6 +65,6 @@ tokenTypes.parenR.updateContext = function (): void {
 tokenTypes.numeric.updateContext = function (): void {
   this.allowPrefix = false;
 };
-tokenTypes.scope.updateContext = function (): void {
+tokenTypes.identifier.updateContext = function (): void {
   this.allowPrefix = false;
 };

@@ -58,3 +58,19 @@ describe('Build-In Custom Operators', () => {
     expect(evaluate('abs -1.5')).toBe(1.5);
   });
 });
+
+
+describe('Scope Variables', () => {
+  test('compile', () => {
+    const evaluate = new Parser('0.1 + a').compile();
+    expect(evaluate({a: 0.2})).toBe(0.3);
+    expect(evaluate({a: -1})).toBe(-0.9);
+  });
+
+  test('missing corresponding scope value', () => {
+    const evaluate = new Parser('1 + a * c').compile();
+    expect(() => {
+      evaluate({a: 0.2});
+    }).toThrowError('The scope `c` corresponding value was not found');
+  });
+});

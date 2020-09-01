@@ -1,5 +1,5 @@
 import {TokenType, tokenTypes, tokenTypes as tt} from './token-type';
-import {isNumericStart, isNumericChar, Node, NodeType, isScopeStart, isScopeChar} from './util';
+import {isNumericStart, isNumericChar, Node, NodeType, isIdentifierChar, isIdentifierStart} from './util';
 import {BinaryCalcMethod, installedOperators, IOperator, UnaryCalcMethod} from '../operator';
 import {IAdapter, transform} from '../transform';
 
@@ -164,10 +164,10 @@ export default class Parser {
       return this.finishNode(node, 'NumericLiteral');
     }
 
-    if (this.type === tt.scope) {
-      node.value = value;
+    if (this.type === tt.identifier) {
+      node.name = value;
       this.next();
-      return this.finishNode(node, 'ScopeVariable');
+      return this.finishNode(node, 'Identifier');
     }
 
     return this.unexpected(value, start) as any;
@@ -314,8 +314,8 @@ export default class Parser {
         this.pos++;
         return this.finishToken(tt.div, '/');
       default:
-        if (isScopeStart(code)) {
-          return this.readScopeToken();
+        if (isIdentifierStart(code)) {
+          return this.readIdentifier();
         }
     }
 
@@ -325,18 +325,18 @@ export default class Parser {
   /**
    * 读取一个 scope 变量 Token
    */
-  readScopeToken(): void {
+  readIdentifier(): void {
     const chunkStart = this.pos;
     while (this.pos < this.input.length) {
       const code = this.input.charCodeAt(this.pos);
-      if (isScopeChar(code)) {
+      if (isIdentifierChar(code)) {
         this.pos++;
       } else {
         break;
       }
     }
     const value = this.input.slice(chunkStart, this.pos);
-    this.finishToken(tt.scope, value);
+    this.finishToken(tt.identifier, value);
   }
 
   /**

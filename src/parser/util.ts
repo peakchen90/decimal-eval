@@ -1,6 +1,6 @@
 export type NodeType =
   'Expression' | 'BinaryExpression' | 'UnaryExpression'
-  | 'NumericLiteral' | 'ScopeVariable' | string
+  | 'NumericLiteral' | 'Identifier' | string
 
 /**
  * AST 节点
@@ -40,10 +40,10 @@ export function isNumericChar(code: number): boolean {
 }
 
 /**
- * 判断 scope 变量开始字符
+ * 判断标识符开始字符
  * @param code
  */
-export function isScopeStart(code: number): boolean {
+export function isIdentifierStart(code: number): boolean {
   if (code >= 65 && code <= 90) return true; // A-E
   if (code >= 97 && code <= 122) return true; // a-z
   if (code === 36) return true; // `$`
@@ -51,11 +51,11 @@ export function isScopeStart(code: number): boolean {
 }
 
 /**
- * 判断数字可能的字符
+ * 判断是标识符开始字符
  * @param code
  */
-export function isScopeChar(code: number): boolean {
-  if (isScopeStart(code)) return true;
+export function isIdentifierChar(code: number): boolean {
+  if (isIdentifierStart(code)) return true;
   if (code >= 48 && code <= 57) return true; // 0-9
   if (code === 95) return true; // `_`
   return false;

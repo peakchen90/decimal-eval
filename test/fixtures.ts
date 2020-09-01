@@ -654,6 +654,64 @@ const fixtures: IFixtures = {
         },
       }
     }
+  },
+  'a + b': {
+    'type': 'Expression',
+    'start': 0,
+    'end': 5,
+    'expression': {
+      'type': 'BinaryExpression',
+      'start': 0,
+      'end': 5,
+      'left': {
+        'type': 'Identifier',
+        'start': 0,
+        'end': 1,
+        'name': 'a'
+      },
+      'operator': '+',
+      'right': {
+        'type': 'Identifier',
+        'start': 4,
+        'end': 5,
+        'name': 'b'
+      }
+    }
+  },
+  '1.2+($1-A_bc123)': {
+    'type': 'Expression',
+    'start': 0,
+    'end': 16,
+    'expression': {
+      'type': 'BinaryExpression',
+      'start': 0,
+      'end': 16,
+      'left': {
+        'type': 'NumericLiteral',
+        'start': 0,
+        'end': 3,
+        'value': '1.2'
+      },
+      'operator': '+',
+      'right': {
+        'type': 'BinaryExpression',
+        'start': 5,
+        'end': 15,
+        'left': {
+          'type': 'Identifier',
+          'start': 5,
+          'end': 7,
+          'name': '$1'
+        },
+        'operator': '-',
+        'right': {
+          'type': 'Identifier',
+          'start': 8,
+          'end': 15,
+          'name': 'A_bc123'
+        },
+      }
+    }
   }
 };
 
