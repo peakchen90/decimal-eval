@@ -98,6 +98,13 @@ evaluate({ def: 1 }); // throw error
 
 #### `Parser.useOperator(operator)`
 Install an operator, which created by the `Operator.create()` method.
+```js
+import {Parser, Operator} from 'decimal-eval';
+
+Parser.useOperator(
+  Operator.create('%', 15, (a,b) => a % b)
+)
+```
 
 #### `Parser.useAdapter(adapter)`
 Custom setting calculation adapter method to four arithmetic (`+`, `-`, `*`, `/`).
