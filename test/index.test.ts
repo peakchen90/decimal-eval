@@ -22,6 +22,10 @@ describe('Evaluate', () => {
     expect(evaluate('0.3 / 3')).toBe(0.1);
   });
 
+  test('1 + abc', () => {
+    expect(evaluate('1 + abc', {abc: 3})).toBe(4);
+  });
+
   test('2 * (1.6 - 0.4)', () => {
     expect(evaluate('2 * (1.6 - 0.4)')).toBe(2.4);
   });
