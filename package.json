@@ -1,7 +1,7 @@
 {
   "name": "decimal-eval",
   "description": "A small, safe, fast JavaScript library for parsing decimal arithmetic.",
-  "version": "0.0.1-rc.2",
+  "version": "0.0.1",
   "main": "index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
