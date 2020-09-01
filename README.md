@@ -90,7 +90,7 @@ Compile and cache expression.
 ```js
 import {Parser} from 'decimal-eval';
 
-const evaluate = new Parser('1 + abc');
+const evaluate = new Parser('1 + abc').compile();
 evaluate({ abc: 2 }); // 3
 evaluate({ abc: 9 }); // 10
 evaluate({ def: 1 }); // throw error
