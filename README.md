@@ -1,5 +1,5 @@
 # decimal-eval
-A small, safe, fast JavaScript library for parsing decimal arithmetic.
+A tiny, safe, fast JavaScript library for decimal arithmetic.
 
 [![Travis (.org) branch](https://img.shields.io/travis/peakchen90/decimal-eval/master.svg)](https://travis-ci.org/peakchen90/decimal-eval)
 [![Codecov](https://img.shields.io/codecov/c/github/peakchen90/decimal-eval.svg)](https://codecov.io/gh/peakchen90/decimal-eval)
@@ -18,8 +18,8 @@ yarn add decimal-eval
 ```
 
 ### Usage
-Support the four arithmetic operations of addition, subtraction, multiplication and division,
-and automatically fix JS decimal precision by [big.js](https://github.com/MikeMcl/big.js).
+Supports the four arithmetic operations (`+`, `-`, `*`, `/`),
+and automatically deal with JavaScript decimal precision by [big.js](https://github.com/MikeMcl/big.js).
 
 ```js
 import {evaluate} from 'decimal-eval';
@@ -56,7 +56,8 @@ evaluate('1 add sin -2') // 0.09070257317431829
 
 ## API
 ### `evaluate(expression: string, scope?: Record<string, number>): number`
-Parse and calculate arithmetic expression.
+Parse the arithmetic expression and then calculate the result.
+
 ```js
 import {evaluate} from 'decimal-eval';
 
@@ -78,7 +79,8 @@ const absOp = Operator.create('abs', 16, (value) => Math.abs(value), true);
 ### Parser
 
 #### `new Parser(expression: string).parse(): AST`
-Parse arithmetic expressions.
+To parse arithmetic expressions.
+
 ```js
 import {Parser} from 'decimal-eval';
 
@@ -86,7 +88,8 @@ const ast = new Parser('1 + 2').parse();
 ```
 
 #### `new Parser(expression: string).compile(): (scope) => number`
-Compile and cache expression.
+To compile and cache the arithmetic expression.
+
 ```js
 import {Parser} from 'decimal-eval';
 
@@ -97,7 +100,8 @@ evaluate({ def: 1 }); // throw error
 ```
 
 #### `Parser.useOperator(operator)`
-Install an operator, which created by the `Operator.create()` method.
+To install an operator created by the `Operator.create()` method.
+
 ```js
 import {Parser, Operator} from 'decimal-eval';
 
@@ -107,8 +111,9 @@ Parser.useOperator(
 ```
 
 #### `Parser.useAdapter(adapter)`
-Custom setting calculation adapter method to four arithmetic (`+`, `-`, `*`, `/`).
+To set custom calculation adapter methods for four arithmetic (`+`, `-`, `*`, `/`).
 [Big.js](https://github.com/MikeMcl/big.js) is used by default.
+
 ```js
 Parser.useAdapter({
   '+': (left, right) => left + right,
@@ -119,6 +124,14 @@ Parser.useAdapter({
 ```
 
 #### `Parser.evaluate(expression: string): number`
-Alias of `evaluate(expression: string)` method.
+The alias of `evaluate(expression: string)` method.
 
 ## Advanced
+When using a custom method to deal with the decimal precision problem, you can use a pure package, which can reduce the size by 60%.
+It doesn't include `big.js`.
+
+```js
+import {evaluate} from 'decimal-eval/dist/pure';
+
+evaluate('0.1 + 0.2'); // 0.30000000000000004
+```
