@@ -48,7 +48,7 @@ describe('Build-In Custom Operators', () => {
   test('pow', () => {
     Parser._installedOperators.length = 0;
     Parser.useOperator(Operator.pow as IOperator);
-    expect(0.2 ** 3).toBeGreaterThan(0.008);
+    expect(0.2 ** 3).toBe(0.008000000000000002);
     expect(evaluate('0.2 ** 3')).toBe(0.008);
   });
 

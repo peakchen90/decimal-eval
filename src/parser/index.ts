@@ -2,11 +2,6 @@ import {TokenType, tokenTypes, tokenTypes as tt} from './token-type';
 import {isNumericStart, isNumericChar, Node, NodeType} from './util';
 import {BinaryCalcMethod, installedOperators, IOperator, UnaryCalcMethod} from '../operator';
 import {IAdapter} from '../transform';
-import cache, {ICache} from './cache';
-
-export interface IParserConfig {
-  cache?: boolean;
-}
 
 /**
  * AST Parser
@@ -27,17 +22,11 @@ export default class Parser {
   static evaluate: (expression: string) => number
   static useAdapter: (adapter: IAdapter) => void
 
-  // global config
-  static config: IParserConfig = {
-    cache: false
-  }
-
   // internal
   static Node = Node
   static TokenType = TokenType
   static tokenTypes = tokenTypes
   static _installedOperators: IOperator[] = installedOperators
-  static _cache: ICache = cache
 
   /**
    * 解析的字符串
@@ -154,11 +143,11 @@ export default class Parser {
       return this.finishNode(node, 'NumericLiteral');
     }
 
-    if (Parser.config.cache && this.type === tt.placeholder) {
-      node.placeholder = value;
-      this.next();
-      return this.finishNode(node, 'Placeholder');
-    }
+    // if (Parser.config.cache && this.type === tt.placeholder) {
+    //   node.placeholder = value;
+    //   this.next();
+    //   return this.finishNode(node, 'Placeholder');
+    // }
 
     return this.unexpected(value, start) as any;
   }
@@ -276,7 +265,7 @@ export default class Parser {
       return this.finishToken(operator.type, operator.value);
     }
 
-    let nextCode;
+    // let nextCode;
 
     switch (code) {
       case 40: // `(`
@@ -304,12 +293,12 @@ export default class Parser {
         this.pos++;
         return this.finishToken(tt.div, '/');
       case 63: // `?`
-        if (Parser.config.cache) {
-          nextCode = this.input.charCodeAt(this.pos + 1); // // `?n` is a placeholder
-          if (nextCode >= 48 && nextCode <= 57) { // 0-9
-            return this.readPlaceholder();
-          }
-        }
+        // if (Parser.config.cache) {
+        //   nextCode = this.input.charCodeAt(this.pos + 1); // // `?n` is a placeholder
+        //   if (nextCode >= 48 && nextCode <= 57) { // 0-9
+        //     return this.readPlaceholder();
+        //   }
+        // }
       default:
         this.unexpected(this.input[this.pos]);
     }
@@ -318,20 +307,20 @@ export default class Parser {
   /**
    * 读取一个占位符 Token
    */
-  readPlaceholder(): void {
-    const chunkStart = this.pos;
-    this.pos++;
-    while (this.pos < this.input.length) {
-      const code = this.input.charCodeAt(this.pos);
-      if (code >= 48 && code <= 57) {
-        this.pos++;
-      } else {
-        break;
-      }
-    }
-    const value = this.input.slice(chunkStart, this.pos);
-    this.finishToken(tt.placeholder, value);
-  }
+  // readPlaceholder(): void {
+  //   const chunkStart = this.pos;
+  //   this.pos++;
+  //   while (this.pos < this.input.length) {
+  //     const code = this.input.charCodeAt(this.pos);
+  //     if (code >= 48 && code <= 57) {
+  //       this.pos++;
+  //     } else {
+  //       break;
+  //     }
+  //   }
+  //   const value = this.input.slice(chunkStart, this.pos);
+  //   this.finishToken(tt.placeholder, value);
+  // }
 
   /**
    * 完善一个 Token

@@ -95,13 +95,12 @@ export function transform(
         );
       case 'NumericLiteral':
         return Number(node.value);
-      case 'Placeholder':
-        placeholder = placeholderMap[node.placeholder];
-        /* istanbul ignore next */
-        if (!placeholder) {
-          throw new Error(`The placeholder ${node.placeholder} not found`);
-        }
-        return Number(placeholder);
+      // case 'Placeholder':
+      //   placeholder = placeholderMap[node.placeholder];
+      //   if (placeholder == null) {
+      //     throw new Error(`The placeholder ${node.placeholder} not found`);
+      //   }
+      //   return Number(placeholder);
       default:
         /* istanbul ignore next */
         throw new Error(`Unexpected type: ${node.type}`);

@@ -1,7 +1,6 @@
 import Parser from './parser';
 import Operator, {useOperator} from './operator';
 import {IAdapter, transform} from './transform';
-import cache, {transformPlaceholder} from './parser/cache';
 
 declare const __VERSION__: string;
 
@@ -18,21 +17,9 @@ let _adapter: IAdapter = {
  * @param expression
  */
 function evaluate(expression: string): number {
-  let placeholderMap, node;
-  if (Parser.config.cache) {
-    const {map, expr} = transformPlaceholder(expression);
-    placeholderMap = map;
-    if (cache.get(expr)) {
-      node = cache.get(expr);
-    } else {
-      node = new Parser(expr).parse();
-      cache.set(expr, node);
-    }
-  } else {
-    node = new Parser(expression).parse();
-  }
+  const node = new Parser(expression).parse();
   if (!node) return 0; // 空字符串
-  return transform(node, _adapter, placeholderMap) as number;
+  return transform(node, _adapter) as number;
 }
 
 /**

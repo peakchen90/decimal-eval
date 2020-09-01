@@ -1,7 +1,6 @@
 import Big from 'big.js';
 import DecimalEval, {Operator, Parser} from './pure';
 import {IAdapter} from './transform';
-import Decimal from './decimal';
 
 /**
  * 默认计算适配器
@@ -37,6 +36,5 @@ Operator.abs = Operator.create('abs', 16, (value) => {
 export default DecimalEval;
 export * from './pure';
 export {
-  Decimal,
   Big
 };
