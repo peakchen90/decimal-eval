@@ -151,7 +151,7 @@ evaluate('0.1 + 0.2'); // 0.30000000000000004
 ```
 
 ### Re-export `big.js`
-Useful for deal with JavaScript decimal precision.
+Useful for deal JavaScript decimal precision.
 
 ```js
 import {Big} from 'decimal-eval';
