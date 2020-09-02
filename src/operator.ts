@@ -4,35 +4,43 @@ import {isNumericStart} from './parser/util';
 export type BinaryCalcMethod = (left: number, right: number) => number;
 export type UnaryCalcMethod = (value: number) => number;
 
-export interface IOperator<M extends BinaryCalcMethod | UnaryCalcMethod = BinaryCalcMethod> {
-  value: string;
-  codes: number[];
-  type: TokenType;
-  calc: M;
-}
-
 // 保留字符
 const reserved = ['+', '-', '*', '/', '(', ')'];
 
 /**
  * 注册的所有自定义运算符
  */
-export const installedOperators: IOperator[] = [];
+export const installedOperators: Operator[] = [];
 
 /**
  * 注册自定义运算符
  * @param operator
  */
-export function useOperator(operator: IOperator): void {
+export function useOperator(operator: Operator): void {
   if (!installedOperators.includes(operator)) {
     installedOperators.unshift(operator); // 注册相同运算符，保证后面注册的覆盖前面的
   }
 }
 
-export default class Operator {
-  static mod?: IOperator<BinaryCalcMethod>
-  static pow?: IOperator<BinaryCalcMethod>
-  static abs?: IOperator<UnaryCalcMethod>
+/**
+ * 运算符
+ */
+export default class Operator<M extends BinaryCalcMethod | UnaryCalcMethod = BinaryCalcMethod> {
+  value: string;
+  codes: number[];
+  type: TokenType;
+  calc: M
+
+  constructor(value: string, precedence: number, calc: M, isPrefix = false) {
+    this.value = value;
+    this.codes = value.split('').map((_, i) => value.charCodeAt(i));
+    this.type = new TokenType(value, {
+      isBinary: !isPrefix,
+      isPrefix,
+      precedence,
+    });
+    this.calc = calc;
+  }
 
   /**
    * 创建运算符
@@ -47,7 +55,7 @@ export default class Operator {
     precedence: number,
     calc: M,
     isPrefix = false
-  ): IOperator<M> {
+  ): Operator {
     if (typeof value !== 'string' || !/^\S+$/.test(value)) {
       throw new Error('The custom operator should be a non-empty string');
     }
@@ -73,15 +81,6 @@ export default class Operator {
       );
     }
 
-    return {
-      type: new TokenType(value, {
-        isBinary: !isPrefix,
-        isPrefix,
-        precedence,
-      }),
-      value,
-      codes: value.split('').map((_, i) => value.charCodeAt(i)),
-      calc
-    };
+    return new this(value, precedence, calc, isPrefix);
   }
 }

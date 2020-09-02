@@ -1,11 +1,11 @@
 import Big from 'big.js';
-import DecimalEval, {Operator, Parser} from './pure';
+import DecimalEval, {Parser} from './pure';
 import {IAdapter} from './transform';
 
 /**
- * 默认计算适配器
+ * big.js 计算适配器
  */
-const defaultAdapter: IAdapter = {
+const bigJSAdapter: IAdapter = {
   '+': (left, right) => {
     return Number(new Big(left).plus(right));
   },
@@ -20,18 +20,7 @@ const defaultAdapter: IAdapter = {
   }
 };
 
-Parser.useAdapter(defaultAdapter);
-
-// build-in custom operators
-Operator.mod = Operator.create('%', 14, (left, right) => {
-  return Number(new Big(left).mod(right));
-});
-Operator.pow = Operator.create('**', 15, (left, right) => {
-  return Number(new Big(left).pow(right));
-});
-Operator.abs = Operator.create('abs', 16, (value) => {
-  return Number(new Big(value).abs());
-}, true);
+Parser.useAdapter(bigJSAdapter);
 
 export default DecimalEval;
 export * from './pure';

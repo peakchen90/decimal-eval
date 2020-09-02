@@ -1,5 +1,5 @@
 import {Node} from './parser/util';
-import {installedOperators, IOperator, UnaryCalcMethod} from './operator';
+import Operator, {installedOperators, UnaryCalcMethod} from './operator';
 
 /**
  * 二元表达式计算方法适配器
@@ -76,7 +76,7 @@ export function unaryCalculation(value: number, operator: string): number {
       return -value;
     default:
       for (let i = 0; i < installedOperators.length; i++) {
-        const op = installedOperators[i] as IOperator<UnaryCalcMethod>;
+        const op = installedOperators[i] as Operator<UnaryCalcMethod>;
         if (op.type.isPrefix && op.value === operator) {
           return op.calc(value);
         }

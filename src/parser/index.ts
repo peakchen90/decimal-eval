@@ -1,6 +1,6 @@
 import {TokenType, tokenTypes, tokenTypes as tt} from './token-type';
 import {isNumericStart, isNumericChar, Node, NodeType, isIdentifierChar, isIdentifierStart} from './util';
-import {BinaryCalcMethod, installedOperators, IOperator, UnaryCalcMethod} from '../operator';
+import Operator, {BinaryCalcMethod, installedOperators, UnaryCalcMethod} from '../operator';
 import {IAdapter, transform} from '../transform';
 
 /**
@@ -21,7 +21,7 @@ export default class Parser {
   private _cacheNode: Node | null | undefined
 
   // pubic static method
-  static useOperator: (operator: IOperator<BinaryCalcMethod | UnaryCalcMethod>) => void
+  static useOperator: (operator: Operator<BinaryCalcMethod | UnaryCalcMethod>) => void
   static evaluate: (expression: string) => number
   static useAdapter: (adapter: IAdapter) => void
 
@@ -29,7 +29,7 @@ export default class Parser {
   static Node = Node
   static TokenType = TokenType
   static tokenTypes = tokenTypes
-  static _installedOperators: IOperator[] = installedOperators
+  static _installedOperators: Operator[] = installedOperators
 
   /**
    * 解析的字符串

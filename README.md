@@ -1,11 +1,18 @@
 # decimal-eval
-A tiny, safe, fast JavaScript library for decimal arithmetic.
+A tiny, safe, fast JavaScript library for decimal arithmetic expressions.
 
 [![Travis (.org) branch](https://img.shields.io/travis/peakchen90/decimal-eval/master.svg)](https://travis-ci.org/peakchen90/decimal-eval)
 [![Codecov](https://img.shields.io/codecov/c/github/peakchen90/decimal-eval.svg)](https://codecov.io/gh/peakchen90/decimal-eval)
 [![npm](https://img.shields.io/npm/v/decimal-eval.svg)](https://www.npmjs.com/package/decimal-eval)
-[![minzip](https://badgen.net/bundlephobia/minzip/decimal-eval)](https://bundlephobia.com/result?p=decimal-eval)
+[![BUNDLE SIZE](https://badgen.net/bundlephobia/minzip/decimal-eval)](https://bundlephobia.com/result?p=decimal-eval)
 [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/peakchen90/decimal-eval/blob/master/LICENSE)
+
+## Features
+- Automatically deal with the JavaScript decimal precision by [big.js](https://github.com/MikeMcl/big.js)
+- Faster than [mathjs](https://github.com/josdejong/mathjs) or [math-expression-evaluator](https://github.com/bugwheels94/math-expression-evaluator)
+- Only 16 KB minified and 5.8 KB gzipped
+- Easy to extend custom operator
+- Supports expression scope variables
 
 ## Get Started
 
@@ -128,11 +135,38 @@ Parser.useAdapter({
 The alias of `evaluate(expression: string)` method.
 
 ## Advanced
-When using a custom method to deal with the decimal precision problem, you can use a pure package, which can reduce the size by 60%.
+
+### Use pure package (no dependencies)
+When using a custom method to deal with the decimal precision problem, you can use a pure package, which can reduce the size by about 60%.
 It doesn't include `big.js`.
 
 ```js
-import {evaluate} from 'decimal-eval/dist/pure';
+import {evaluate, Parser} from 'decimal-eval/dist/pure';
 
+// set custom calculation adapter
+// Parser.useAdapter(adapter);
+
+// Does not deal with precision by default
 evaluate('0.1 + 0.2'); // 0.30000000000000004
 ```
+
+### Re-export `big.js`
+Useful for deal with JavaScript decimal precision.
+
+```js
+import {Big} from 'decimal-eval';
+const val = new Big(0.1).plus(0.2);
+console.log(Number(val)); // 0.3
+```
+
+### Precedence of built-in operators
+The operator precedence according to: [MDN operator precedence](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence).
+
+|  operator   | precedence  |
+|  --------   | ----------  |
+| `... + ...` | 13         |
+| `... - ...` | 13         |
+| `... * ...` | 14         |
+| `... / ...` | 14         |
+| `+ ...`     | 16         |
+| `- ...`     | 16         |
