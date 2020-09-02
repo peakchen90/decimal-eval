@@ -1,0 +1,69 @@
+body {
+  margin: 0;
+  padding: 30px 0;
+  font-size: 14px;
+  font-family: -apple-system, 'PingFang SC', Helvetica, 'Helvetica Neue', 'Microsoft YaHei', Arial, sans-serif;
+  color: #222222;
+}
+
+p {
+  margin: 0;
+}
+
+.container {
+  min-width: 860px;
+  max-width: 1200px;
+  margin: 20px auto;
+}
+
+.container > h1 {
+  font-size: 26px;
+  line-height: 1;
+}
+
+.container > button {
+  font-size: 16px;
+  padding: 5px 10px;
+  cursor: pointer;
+  color: #333333;
+}
+
+.container > button[disabled] {
+  cursor: no-drop;
+}
+
+.table {
+  width: 100%;
+  margin-top: 40px;
+  border-collapse: collapse;
+}
+
+.table th {
+  font-size: 16px;
+  border: 1px solid #ccc;
+  height: 60px;
+  background: #ececec;
+  text-align: center;
+  font-weight: bold;
+  box-sizing: border-box;
+}
+
+.table th .sub-title {
+  margin-top: 2px;
+  color: #666;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.table td {
+  border: 1px solid #ccc;
+  height: 40px;
+  box-sizing: border-box;
+  padding: 0 8px;
+  text-align: center;
+  color: #555;
+}
+
+.strong-text {
+  font-weight: bold;
+}
