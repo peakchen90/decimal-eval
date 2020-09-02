@@ -9,8 +9,7 @@ A tiny, safe, fast JavaScript library for decimal arithmetic expressions.
 
 ## Features
 - Automatically deal with the JavaScript decimal precision by [big.js](https://github.com/MikeMcl/big.js)
-- Faster than [mathjs](https://github.com/josdejong/mathjs) or [math-expression-evaluator](https://github.com/bugwheels94/math-expression-evaluator)
-- Only 16 KB minified and 5.8 KB gzipped
+- Fast and tiny, only 16 KB minified and 5.8 KB gzipped
 - Easy to extend custom operator
 - Supports expression scope variables
 
