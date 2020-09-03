@@ -22,8 +22,8 @@ export default class Parser {
 
   // pubic static method
   static useOperator: (operator: Operator<BinaryCalcMethod | UnaryCalcMethod>) => void
-  static evaluate: (expression: string) => number
   static useAdapter: (adapter: IAdapter) => void
+  static evaluate: (expression: string) => number
 
   // static internal
   static Node = Node
@@ -48,6 +48,17 @@ export default class Parser {
   }
 
   /**
+   * 编译表达式
+   */
+  compile(): (scope?: Record<string, number>) => number {
+    const node = this.parse();
+    return (scope?: Record<string, number>): number => {
+      if (!node) return 0;
+      return transform(node, scope ?? {}) as number;
+    };
+  }
+
+  /**
    * 开始解析，如果是空字符串返回 `null`
    */
   parse(): Node | null {
@@ -67,17 +78,6 @@ export default class Parser {
     }
     this._cacheNode = this.finishNode(node, 'Expression');
     return this._cacheNode;
-  }
-
-  /**
-   * 编译表达式
-   */
-  compile(): (scope?: Record<string, number>) => number {
-    const node = this.parse();
-    return (scope?: Record<string, number>): number => {
-      if (!node) return 0;
-      return transform(node, scope ?? {}) as number;
-    };
   }
 
   /**
