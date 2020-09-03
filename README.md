@@ -10,10 +10,10 @@ A tiny, safe, fast JavaScript library for decimal arithmetic expressions.
 English | [简体中文](./README.ZH-CN.md)
 
 ## Features
-- Automatically deal with the JavaScript decimal precision problem by [big.js](https://github.com/MikeMcl/big.js)
-- Fast and tiny, only 16 KB minified and 5.8 KB gzipped
-- Easy to extend custom operator
-- Supports expression scope variables
+- :v: Automatically deal with the JavaScript decimal precision problem by [big.js](https://github.com/MikeMcl/big.js)
+- :rocket: Fast and tiny, only 16 KB minified and 5.8 KB gzipped
+- :writing_hand: Easy to extend custom operator
+- :vulcan_salute: Supports expression scope variables
 
 ## Get Started
 
