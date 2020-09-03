@@ -76,6 +76,8 @@ evaluate('1 + abc', { abc: 2 }); // 3
 
 ### Operator
 #### `Operator.create(value: string, precedence: number, calc: Function, isPrefix = false)`
+Create a custom operator, when `isPrefix` is true, create a unary operator (prefix operator), otherwise create a binary operator.
+
 ```js
 import {Operator} from 'decimal-eval';
 // create operator `%`, which is a binary operator, the calc should like: `(left: number, right: number) => number`
@@ -88,7 +90,7 @@ const absOp = Operator.create('abs', 16, (value) => Math.abs(value), true);
 ### Parser
 
 #### `new Parser(expression: string).parse(): AST`
-To parse arithmetic expressions.
+Parse arithmetic expressions.
 
 ```js
 import {Parser} from 'decimal-eval';
@@ -97,7 +99,7 @@ const ast = new Parser('1 + 2').parse();
 ```
 
 #### `new Parser(expression: string).compile(): (scope) => number`
-To compile and cache the arithmetic expression.
+Compile and cache the arithmetic expression.
 
 ```js
 import {Parser} from 'decimal-eval';
@@ -109,7 +111,7 @@ evaluate({ def: 1 }); // throw error, the variable `abc` is not defined
 ```
 
 #### `Parser.useOperator(operator)`
-To install an operator created by the `Operator.create()` method.
+Install an operator created by the `Operator.create()` method.
 
 ```js
 import {Parser, Operator} from 'decimal-eval';
@@ -120,7 +122,7 @@ Parser.useOperator(
 ```
 
 #### `Parser.useAdapter(adapter)`
-To set custom calculation adapter methods for four arithmetic (`+`, `-`, `*`, `/`).
+Set custom calculation adapter methods for four arithmetic (`+`, `-`, `*`, `/`).
 [Big.js](https://github.com/MikeMcl/big.js) is used by default.
 
 ```js

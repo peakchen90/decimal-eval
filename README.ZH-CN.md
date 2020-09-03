@@ -74,6 +74,8 @@ evaluate('1 + abc', { abc: 2 }); // 3
 
 ### Operator
 #### `Operator.create(value: string, precedence: number, calc: Function, isPrefix = false)`
+创建一个自定义运算符，当 `isPrefix` 是 true 时，会创建一元运算符 (运算符在前)，否则创建二元运算符
+
 ```js
 import {Operator} from 'decimal-eval';
 // 创建一个二元运算符 "%", 它的计算方法像这样: `(left: number, right: number) => number`
