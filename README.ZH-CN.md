@@ -147,7 +147,7 @@ evaluate('0.1 + 0.2'); // 0.30000000000000004
 ```
 
 ### 再次导出 `big.js`
-对处理 JavaScript 小数精度很有用
+[Big.js](https://github.com/MikeMcl/big.js) 对处理 JavaScript 小数精度问题很有用，而不用重复安装
 
 ```js
 import {Big} from 'decimal-eval';
@@ -158,8 +158,8 @@ console.log(Number(val)); // 0.3
 ### 内置运算符优先级
 运算符优先级根据: [MDN 运算符优先级](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence).
 
-|  operator   | precedence  |
-|  --------   | ----------  |
+|  运算符      | 优先级      |
+|  --------   | ---------- |
 | `... + ...` | 13         |
 | `... - ...` | 13         |
 | `... * ...` | 14         |

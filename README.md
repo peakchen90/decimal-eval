@@ -10,7 +10,7 @@ A tiny, safe, fast JavaScript library for decimal arithmetic expressions.
 English | [简体中文](./README.ZH-CN.md)
 
 ## Features
-- Automatically deal with the JavaScript decimal precision by [big.js](https://github.com/MikeMcl/big.js)
+- Automatically deal with the JavaScript decimal precision problem by [big.js](https://github.com/MikeMcl/big.js)
 - Fast and tiny, only 16 KB minified and 5.8 KB gzipped
 - Easy to extend custom operator
 - Supports expression scope variables
@@ -151,7 +151,7 @@ evaluate('0.1 + 0.2'); // 0.30000000000000004
 ```
 
 ### Re-export `big.js`
-Useful for deal JavaScript decimal precision.
+Useful for deal JavaScript decimal precision problem without having to install [big.js](https://github.com/MikeMcl/big.js) again.
 
 ```js
 import {Big} from 'decimal-eval';
@@ -162,8 +162,8 @@ console.log(Number(val)); // 0.3
 ### Precedence of built-in operators
 The operator precedence according to: [MDN operator precedence](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence).
 
-|  operator   | precedence  |
-|  --------   | ----------  |
+|  operator   | precedence |
+|  --------   | ---------- |
 | `... + ...` | 13         |
 | `... - ...` | 13         |
 | `... * ...` | 14         |
