@@ -10,10 +10,10 @@
 [English](./README.md) | 简体中文
 
 ## 特性
-- :mechanical_arm: 使用 [big.js](https://github.com/MikeMcl/big.js) 自动处理 JavaScript 小数精度
+- :v: 使用 [big.js](https://github.com/MikeMcl/big.js) 自动处理 JavaScript 小数精度
 - :rocket: 执行快、体积小，压缩后只有 16 KB, GZIP 后仅 5.8 KB
 - :writing_hand: 非常容易扩展自己的自定义运算符
-- :v: 支持表达式变量占位符
+- :vulcan_salute: 支持表达式变量占位符
 
 ## 快速开始
 
