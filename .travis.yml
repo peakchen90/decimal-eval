@@ -5,12 +5,14 @@ os:
 
 dist: xenial
 
+cache: yarn
+
 node_js:
   - "10"
   - "12"
 
 install:
-  - npm install
+  - yarn
   - npm install -g codecov
 
 stages:
