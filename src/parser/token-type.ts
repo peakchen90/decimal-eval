@@ -1,29 +1,29 @@
 import Parser from './index';
 
 export interface ITokenTypeOptions {
-  isBinary?: boolean; // 是否为二元元运算符
-  isPrefix?: boolean; // 是否可以作为前缀（一元运算符，仅支持运算符在左侧）
-  precedence?: number; // 运算符优先级
+  readonly isBinary?: boolean; // 是否为二元元运算符
+  readonly isPrefix?: boolean; // 是否可以作为前缀（一元运算符，仅支持运算符在左侧）
+  readonly precedence?: number; // 运算符优先级
 }
 
 export class TokenType {
   /**
    * Token label
    */
-  label: string
+  readonly label: string
   /**
    * 是否为二元运算符
    */
-  isBinary: boolean
+  readonly isBinary: boolean
   /**
    * 是否可以作为前缀（一元运算符，仅支持运算符在左侧）
    */
-  isPrefix: boolean
+  readonly isPrefix: boolean
   /**
    * 运算符优先级
    * @see https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
    */
-  precedence: number
+  readonly precedence: number
   /**
    * 读取 Token 时更新上下文
    */

@@ -5,7 +5,7 @@ import {IAdapter} from './transform';
 /**
  * big.js 计算适配器
  */
-const bigJSAdapter: IAdapter = {
+const bigJSAdapter: Readonly<IAdapter> = {
   '+': (left, right) => {
     return Number(new Big(left).plus(right));
   },

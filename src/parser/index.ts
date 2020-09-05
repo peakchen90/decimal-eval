@@ -7,10 +7,10 @@ import {IAdapter, transform} from '../transform';
  * AST Parser
  */
 export default class Parser {
-  input: string // 输入的解析字符串
+  readonly input: string // 输入的解析字符串
+  pos: number // 当前位置
   type: TokenType // 当前 Token 的类型
   value: string  // 当前 Token 的值
-  pos: number // 当前位置
   start: number // 当前 Token 的开始位置
   end: number // 当前 Token 的结束位置
   lastTokenStart: number // 上一个 Token 的开始位置
@@ -26,10 +26,10 @@ export default class Parser {
   static evaluate: (expression: string) => number
 
   // static internal
-  static Node = Node
-  static TokenType = TokenType
-  static tokenTypes = tokenTypes
-  static _installedOperators: Operator[] = installedOperators
+  static readonly Node = Node
+  static readonly TokenType = TokenType
+  static readonly tokenTypes = tokenTypes
+  static readonly _installedOperators: Operator[] = installedOperators
 
   /**
    * 解析的字符串
@@ -285,8 +285,6 @@ export default class Parser {
       this.pos += operator.codes.length;
       return this.finishToken(operator.type, operator.value);
     }
-
-    // let nextCode;
 
     switch (code) {
       case 40: // `(`

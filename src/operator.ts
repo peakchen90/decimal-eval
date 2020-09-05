@@ -3,9 +3,10 @@ import {isNumericStart} from './parser/util';
 
 export type BinaryCalcMethod = (left: number, right: number) => number;
 export type UnaryCalcMethod = (value: number) => number;
+export type OperatorMethod = BinaryCalcMethod | UnaryCalcMethod;
 
 // 保留字符
-const reserved = ['+', '-', '*', '/', '(', ')'];
+const reserved: Readonly<string[]> = ['+', '-', '*', '/', '(', ')'];
 
 /**
  * 注册的所有自定义运算符
@@ -25,11 +26,11 @@ export function useOperator(operator: Operator): void {
 /**
  * 运算符
  */
-export default class Operator<M extends BinaryCalcMethod | UnaryCalcMethod = BinaryCalcMethod> {
-  value: string;
-  codes: number[];
-  type: TokenType;
-  calc: M
+export default class Operator<M extends OperatorMethod = BinaryCalcMethod> {
+  readonly value: string;
+  readonly codes: number[];
+  readonly type: TokenType;
+  readonly calc: M
 
   constructor(value: string, precedence: number, calc: M, isPrefix = false) {
     this.value = value;
@@ -50,7 +51,7 @@ export default class Operator<M extends BinaryCalcMethod | UnaryCalcMethod = Bin
    * @param isPrefix 是否可以作为前缀（一元运算符，仅支持运算符在左侧，计算方法 `calc` 只接收一个参数）
    * @see 运算符优先级参考: https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
    */
-  static create<M extends BinaryCalcMethod | UnaryCalcMethod>(
+  static create<M extends OperatorMethod>(
     value: string,
     precedence: number,
     calc: M,
