@@ -1,6 +1,7 @@
 module.exports = {
   extends: [
-    'plugin:@typescript-eslint/recommended',
+    'alloy',
+    'alloy/typescript'
   ],
   env: {
     browser: true,
@@ -20,8 +21,6 @@ module.exports = {
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
     '@typescript-eslint/no-useless-constructor': 'error',
-    '@typescript-eslint/no-empty-function': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
     'no-useless-constructor': 'off',
     'no-param-reassign': 'off',
     'quotes': ['error', 'single'],
@@ -29,6 +28,9 @@ module.exports = {
     'eqeqeq': 'off',
     'no-eq-null': 'off',
     'semi': 'error',
-    'no-undef': 'error'
+    'max-params': 'off',
+    'no-return-assign': 'off',
+    'no-undef': 'off',
+    'one-var': 'off'
   }
 };
