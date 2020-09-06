@@ -30,6 +30,7 @@ module.exports = {
     'semi': 'error',
     'max-params': 'off',
     'no-return-assign': 'off',
+    'max-nested-callbacks': 'off',
     'no-undef': 'off',
     'one-var': 'off'
   }

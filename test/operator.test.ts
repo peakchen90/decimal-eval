@@ -55,7 +55,7 @@ describe('Binary Operator', () => {
 
   test('missing calculation method', () => {
     expect(() => {
-      const mod = Operator.create('%', 13, undefined as any);
+      const mod = Operator.create('%', 13, undefined as never);
       Parser.useOperator(mod);
       evaluate('1 % 2');
     }).toThrowError(/Expected to receive a calculation method/);

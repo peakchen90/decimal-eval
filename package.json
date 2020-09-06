@@ -11,7 +11,7 @@
     "build": "rollup -c",
     "test": "jest",
     "dts": "node scripts/dts.js",
-    "lint": "eslint src/**/*.ts --fix"
+    "lint": "eslint {src,test}/**/*.ts --fix"
   },
   "keywords": [
     "eval",

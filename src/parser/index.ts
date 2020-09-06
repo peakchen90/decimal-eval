@@ -170,7 +170,7 @@ export default class Parser {
       return this.finishNode(node, 'Identifier');
     }
 
-    return this.unexpected(value, start) as any;
+    return this.unexpected(value, start);
   }
 
   /**
@@ -430,7 +430,7 @@ export default class Parser {
    * @param token
    * @param pos
    */
-  unexpected(token = '', pos?: number): void {
+  unexpected(token = '', pos?: number): never {
     this.raise(pos ?? this.start, `Unexpected token ${token}`);
   }
 
@@ -439,7 +439,7 @@ export default class Parser {
    * @param pos
    * @param message
    */
-  raise(pos: number, message: string): void {
+  raise(pos: number, message: string): never {
     if (pos > this.input.length - 1) {
       message = 'Unexpected end of input';
     } else {
