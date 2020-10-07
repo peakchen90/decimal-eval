@@ -21,6 +21,7 @@ module.exports = {
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
     '@typescript-eslint/no-useless-constructor': 'error',
+    '@typescript-eslint/prefer-for-of': 'off',
     'no-useless-constructor': 'off',
     'no-param-reassign': 'off',
     'quotes': ['error', 'single'],
