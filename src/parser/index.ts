@@ -8,6 +8,7 @@ import {IAdapter, transform} from '../transform';
  */
 export default class Parser {
   readonly input: string // 输入的解析字符串
+  node: Node | null | undefined // 解析后的 AST 节点
   pos: number // 当前位置
   type: TokenType // 当前 Token 的类型
   value: string  // 当前 Token 的值
@@ -17,19 +18,19 @@ export default class Parser {
   lastTokenEnd: number // 上一个 Token 的结束位置
   allowPrefix: boolean // 当前上下文是否允许前缀
 
-  // private properties
-  private _cacheNode: Node | null | undefined
-
   // pubic static method
   static useOperator: (operator: Operator<BinaryCalcMethod | UnaryCalcMethod>) => void
   static useAdapter: (adapter: IAdapter) => void
-  static evaluate: (expression: string) => number
 
-  // static internal
+  static evaluate(expression: string, scope?: Record<string, number>): number {
+    return new Parser(expression).compile()(scope);
+  }
+
+  // internal static
   static readonly Node = Node
   static readonly TokenType = TokenType
   static readonly tokenTypes = tokenTypes
-  static readonly _installedOperators: Operator[] = installedOperators
+  static readonly installedOperators: Operator[] = installedOperators
 
   /**
    * 解析的字符串
@@ -51,7 +52,10 @@ export default class Parser {
    * 编译表达式
    */
   compile(): (scope?: Record<string, number>) => number {
-    const node = this.parse();
+    let node = this.node;
+    if (node === undefined) {
+      node = this.parse();
+    }
     return (scope?: Record<string, number>): number => {
       if (!node) return 0;
       return transform(node, scope ?? {}) as number;
@@ -62,22 +66,17 @@ export default class Parser {
    * 开始解析，如果是空字符串返回 `null`
    */
   parse(): Node | null {
-    if (this._cacheNode !== undefined) {
-      return this._cacheNode;
-    }
-
     this.next();
     const node = this.startNode(this.start);
     if (this.type === tt.end) {
-      return this._cacheNode = null; // 空字符
+      return this.node = null; // 空字符
     }
 
     node.expression = this.parseExpression();
     if (this.type !== tt.end) { // 其后遇到其他非法字符
       this.unexpected(this.value);
     }
-    this._cacheNode = this.finishNode(node, 'Expression');
-    return this._cacheNode;
+    return this.node = this.finishNode(node, 'Expression');
   }
 
   /**

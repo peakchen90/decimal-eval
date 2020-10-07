@@ -82,6 +82,6 @@ export default class Operator<M extends OperatorMethod = BinaryCalcMethod> {
       );
     }
 
-    return new this(value, precedence, calc, isPrefix);
+    return new Operator(value, precedence, calc, isPrefix);
   }
 }

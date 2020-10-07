@@ -7,6 +7,7 @@ describe('Pure', () => {
     expect(evaluate('3 - 5')).toBe(-2);
     expect(evaluate('2 * 4')).toBe(8);
     expect(evaluate('20 / 2')).toBe(10);
+    expect(evaluate('1 + abc', {abc: 2})).toBe(3);
   });
 
   test('useAdapter: missing adapter', () => {

@@ -15,13 +15,6 @@ describe('Parser Special Case', () => {
     expect(new Parser('').parse()).toBe(null);
   });
 
-  test('cache parsed node', () => {
-    const parser = new Parser('1 + 2');
-    const r1 = parser.parse();
-    const r2 = parser.parse();
-    expect(r1).toBe(r2);
-  });
-
   test('skip space', () => {
     expect(new Parser('\r\n 1 \t \v + \t 2 \n').parse()).toMatchObject({
       'type': 'Expression',
