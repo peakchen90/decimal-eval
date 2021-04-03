@@ -11,7 +11,7 @@ node_js:
 
 install:
   - npm install --registry https://registry.npmjs.org
-  - npm install -g codecov
+  - npm install -g codecov --registry https://registry.npmjs.org
 
 stages:
   - test
