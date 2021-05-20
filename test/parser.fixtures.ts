@@ -17,8 +17,7 @@ const parserFixtures: IParserFixtures = {
       'start': 0,
       'end': 1,
       'value': '1',
-      'rawValue': '1',
-      'radix': 10,
+      'rawValue': '1'
     }
   },
   '1.e3': {
@@ -30,8 +29,7 @@ const parserFixtures: IParserFixtures = {
       'start': 0,
       'end': 4,
       'value': '1.e3',
-      'rawValue': '1.e3',
-      'radix': 10,
+      'rawValue': '1.e3'
     }
   },
   '1.2e+3': {
@@ -43,8 +41,7 @@ const parserFixtures: IParserFixtures = {
       'start': 0,
       'end': 6,
       'value': '1.2e+3',
-      'rawValue': '1.2e+3',
-      'radix': 10,
+      'rawValue': '1.2e+3'
     }
   },
   '1.2E-3': {
@@ -56,8 +53,7 @@ const parserFixtures: IParserFixtures = {
       'start': 0,
       'end': 6,
       'value': '1.2E-3',
-      'rawValue': '1.2E-3',
-      'radix': 10,
+      'rawValue': '1.2E-3'
     }
   },
   '1+2': {
@@ -73,8 +69,7 @@ const parserFixtures: IParserFixtures = {
         'start': 0,
         'end': 1,
         'value': '1',
-        'rawValue': '1',
-        'radix': 10,
+        'rawValue': '1'
       },
       'operator': '+',
       'right': {
@@ -82,8 +77,7 @@ const parserFixtures: IParserFixtures = {
         'start': 2,
         'end': 3,
         'value': '2',
-        'rawValue': '2',
-        'radix': 10,
+        'rawValue': '2'
       }
     }
   },
@@ -100,8 +94,7 @@ const parserFixtures: IParserFixtures = {
         'start': 0,
         'end': 1,
         'value': '1',
-        'rawValue': '1',
-        'radix': 10,
+        'rawValue': '1'
       },
       'operator': '-',
       'right': {
@@ -109,8 +102,7 @@ const parserFixtures: IParserFixtures = {
         'start': 2,
         'end': 3,
         'value': '2',
-        'rawValue': '2',
-        'radix': 10,
+        'rawValue': '2'
       }
     }
   },
@@ -127,8 +119,7 @@ const parserFixtures: IParserFixtures = {
         'start': 0,
         'end': 1,
         'value': '1',
-        'rawValue': '1',
-        'radix': 10,
+        'rawValue': '1'
       },
       'operator': '*',
       'right': {
@@ -136,8 +127,7 @@ const parserFixtures: IParserFixtures = {
         'start': 2,
         'end': 3,
         'value': '2',
-        'rawValue': '2',
-        'radix': 10,
+        'rawValue': '2'
       }
     }
   },
@@ -154,8 +144,7 @@ const parserFixtures: IParserFixtures = {
         'start': 0,
         'end': 1,
         'value': '1',
-        'rawValue': '1',
-        'radix': 10,
+        'rawValue': '1'
       },
       'operator': '/',
       'right': {
@@ -163,8 +152,7 @@ const parserFixtures: IParserFixtures = {
         'start': 2,
         'end': 3,
         'value': '2',
-        'rawValue': '2',
-        'radix': 10,
+        'rawValue': '2'
       }
     }
   },
@@ -181,8 +169,7 @@ const parserFixtures: IParserFixtures = {
         'start': 0,
         'end': 1,
         'value': '1',
-        'rawValue': '1',
-        'radix': 10,
+        'rawValue': '1'
       },
       'operator': '-',
       'right': {
@@ -196,8 +183,7 @@ const parserFixtures: IParserFixtures = {
           'start': 3,
           'end': 4,
           'value': '2',
-          'rawValue': '2',
-          'radix': 10,
+          'rawValue': '2'
         }
       }
     }
@@ -215,8 +201,7 @@ const parserFixtures: IParserFixtures = {
         'start': 0,
         'end': 1,
         'value': '1',
-        'rawValue': '1',
-        'radix': 10,
+        'rawValue': '1'
       },
       'operator': '+',
       'right': {
@@ -230,8 +215,7 @@ const parserFixtures: IParserFixtures = {
           'start': 3,
           'end': 4,
           'value': '2',
-          'rawValue': '2',
-          'radix': 10,
+          'rawValue': '2'
         }
       }
     }
@@ -249,8 +233,7 @@ const parserFixtures: IParserFixtures = {
         'start': 0,
         'end': 1,
         'value': '1',
-        'rawValue': '1',
-        'radix': 10,
+        'rawValue': '1'
       },
       'operator': '+',
       'right': {
@@ -264,8 +247,7 @@ const parserFixtures: IParserFixtures = {
           'start': 3,
           'end': 4,
           'value': '2',
-          'rawValue': '2',
-          'radix': 10,
+          'rawValue': '2'
         }
       }
     }
@@ -283,8 +265,7 @@ const parserFixtures: IParserFixtures = {
         'start': 0,
         'end': 1,
         'value': '1',
-        'rawValue': '1',
-        'radix': 10,
+        'rawValue': '1'
       },
       'operator': '-',
       'right': {
@@ -298,8 +279,7 @@ const parserFixtures: IParserFixtures = {
           'start': 3,
           'end': 4,
           'value': '2',
-          'rawValue': '2',
-          'radix': 10,
+          'rawValue': '2'
         }
       }
     }
@@ -317,8 +297,7 @@ const parserFixtures: IParserFixtures = {
         'start': 0,
         'end': 1,
         'value': '1',
-        'rawValue': '1',
-        'radix': 10,
+        'rawValue': '1'
       },
       'operator': '-',
       'right': {
@@ -348,8 +327,7 @@ const parserFixtures: IParserFixtures = {
                 'start': 12,
                 'end': 13,
                 'value': '2',
-                'rawValue': '2',
-                'radix': 10,
+                'rawValue': '2'
               }
             },
             'operator': '-',
@@ -364,8 +342,7 @@ const parserFixtures: IParserFixtures = {
                 'start': 18,
                 'end': 19,
                 'value': '3',
-                'rawValue': '3',
-                'radix': 10,
+                'rawValue': '3'
               }
             }
           }
@@ -390,8 +367,7 @@ const parserFixtures: IParserFixtures = {
           'start': 1,
           'end': 2,
           'value': '1',
-          'rawValue': '1',
-          'radix': 10,
+          'rawValue': '1'
         },
         'operator': '+',
         'right': {
@@ -399,8 +375,7 @@ const parserFixtures: IParserFixtures = {
           'start': 5,
           'end': 6,
           'value': '2',
-          'rawValue': '2',
-          'radix': 10,
+          'rawValue': '2'
         }
       },
       'operator': '-',
@@ -417,8 +392,7 @@ const parserFixtures: IParserFixtures = {
             'start': 9,
             'end': 10,
             'value': '3',
-            'rawValue': '3',
-            'radix': 10,
+            'rawValue': '3'
           },
           'operator': '*',
           'right': {
@@ -426,8 +400,7 @@ const parserFixtures: IParserFixtures = {
             'start': 13,
             'end': 14,
             'value': '4',
-            'rawValue': '4',
-            'radix': 10,
+            'rawValue': '4'
           }
         },
         'operator': '/',
@@ -436,8 +409,7 @@ const parserFixtures: IParserFixtures = {
           'start': 17,
           'end': 18,
           'value': '5',
-          'rawValue': '5',
-          'radix': 10,
+          'rawValue': '5'
         }
       }
     }
@@ -455,8 +427,7 @@ const parserFixtures: IParserFixtures = {
         'start': 3,
         'end': 4,
         'value': '1',
-        'rawValue': '1',
-        'radix': 10,
+        'rawValue': '1'
       },
       'operator': '+',
       'right': {
@@ -464,8 +435,7 @@ const parserFixtures: IParserFixtures = {
         'start': 7,
         'end': 8,
         'value': '2',
-        'rawValue': '2',
-        'radix': 10,
+        'rawValue': '2'
       }
     }
   },
@@ -486,8 +456,7 @@ const parserFixtures: IParserFixtures = {
           'start': 0,
           'end': 1,
           'value': '1',
-          'rawValue': '1',
-          'radix': 10,
+          'rawValue': '1'
         },
         'operator': '+',
         'right': {
@@ -495,8 +464,7 @@ const parserFixtures: IParserFixtures = {
           'start': 4,
           'end': 5,
           'value': '2',
-          'rawValue': '2',
-          'radix': 10,
+          'rawValue': '2'
         }
       },
       'operator': '-',
@@ -505,8 +473,7 @@ const parserFixtures: IParserFixtures = {
         'start': 8,
         'end': 9,
         'value': '3',
-        'rawValue': '3',
-        'radix': 10,
+        'rawValue': '3'
       }
     }
   },
@@ -523,8 +490,7 @@ const parserFixtures: IParserFixtures = {
         'start': 0,
         'end': 1,
         'value': '1',
-        'rawValue': '1',
-        'radix': 10,
+        'rawValue': '1'
       },
       'operator': '+',
       'right': {
@@ -536,8 +502,7 @@ const parserFixtures: IParserFixtures = {
           'start': 4,
           'end': 5,
           'value': '2',
-          'rawValue': '2',
-          'radix': 10,
+          'rawValue': '2'
         },
         'operator': '*',
         'right': {
@@ -545,8 +510,7 @@ const parserFixtures: IParserFixtures = {
           'start': 8,
           'end': 9,
           'value': '3',
-          'rawValue': '3',
-          'radix': 10,
+          'rawValue': '3'
         }
       }
     }
@@ -568,8 +532,7 @@ const parserFixtures: IParserFixtures = {
           'start': 0,
           'end': 1,
           'value': '1',
-          'rawValue': '1',
-          'radix': 10,
+          'rawValue': '1'
         },
         'operator': '/',
         'right': {
@@ -577,8 +540,7 @@ const parserFixtures: IParserFixtures = {
           'start': 4,
           'end': 5,
           'value': '2',
-          'rawValue': '2',
-          'radix': 10,
+          'rawValue': '2'
         }
       },
       'operator': '-',
@@ -587,8 +549,7 @@ const parserFixtures: IParserFixtures = {
         'start': 8,
         'end': 9,
         'value': '3',
-        'rawValue': '3',
-        'radix': 10,
+        'rawValue': '3'
       }
     }
   },
@@ -605,8 +566,7 @@ const parserFixtures: IParserFixtures = {
         'start': 0,
         'end': 1,
         'value': '1',
-        'rawValue': '1',
-        'radix': 10,
+        'rawValue': '1'
       },
       'operator': '*',
       'right': {
@@ -618,8 +578,7 @@ const parserFixtures: IParserFixtures = {
           'start': 5,
           'end': 6,
           'value': '2',
-          'rawValue': '2',
-          'radix': 10,
+          'rawValue': '2'
         },
         'operator': '-',
         'right': {
@@ -627,8 +586,7 @@ const parserFixtures: IParserFixtures = {
           'start': 9,
           'end': 10,
           'value': '3',
-          'rawValue': '3',
-          'radix': 10,
+          'rawValue': '3'
         }
       }
     }
@@ -650,8 +608,7 @@ const parserFixtures: IParserFixtures = {
           'start': 1,
           'end': 2,
           'value': '1',
-          'rawValue': '1',
-          'radix': 10,
+          'rawValue': '1'
         },
         'operator': '+',
         'right': {
@@ -659,8 +616,7 @@ const parserFixtures: IParserFixtures = {
           'start': 5,
           'end': 6,
           'value': '2',
-          'rawValue': '2',
-          'radix': 10,
+          'rawValue': '2'
         },
       },
       'operator': '*',
@@ -669,8 +625,7 @@ const parserFixtures: IParserFixtures = {
         'start': 10,
         'end': 11,
         'value': '3',
-        'rawValue': '3',
-        'radix': 10,
+        'rawValue': '3'
       }
     }
   },
@@ -695,8 +650,7 @@ const parserFixtures: IParserFixtures = {
             'start': 3,
             'end': 4,
             'value': '1',
-            'rawValue': '1',
-            'radix': 10,
+            'rawValue': '1'
           },
           'operator': '+',
           'right': {
@@ -704,8 +658,7 @@ const parserFixtures: IParserFixtures = {
             'start': 7,
             'end': 8,
             'value': '2',
-            'rawValue': '2',
-            'radix': 10,
+            'rawValue': '2'
           },
         },
         'operator': '/',
@@ -714,8 +667,7 @@ const parserFixtures: IParserFixtures = {
           'start': 12,
           'end': 13,
           'value': '3',
-          'rawValue': '3',
-          'radix': 10,
+          'rawValue': '3'
         },
       },
       'operator': '*',
@@ -728,8 +680,7 @@ const parserFixtures: IParserFixtures = {
           'start': 18,
           'end': 19,
           'value': '4',
-          'rawValue': '4',
-          'radix': 10,
+          'rawValue': '4'
         },
         'operator': '-',
         'right': {
@@ -741,8 +692,7 @@ const parserFixtures: IParserFixtures = {
             'start': 22,
             'end': 23,
             'value': '5',
-            'rawValue': '5',
-            'radix': 10,
+            'rawValue': '5'
           },
           'operator': '*',
           'right': {
@@ -750,8 +700,7 @@ const parserFixtures: IParserFixtures = {
             'start': 27,
             'end': 28,
             'value': '6',
-            'rawValue': '6',
-            'radix': 10,
+            'rawValue': '6'
           }
         },
       }
@@ -793,8 +742,7 @@ const parserFixtures: IParserFixtures = {
         'start': 0,
         'end': 3,
         'value': '1.2',
-        'rawValue': '1.2',
-        'radix': 10,
+        'rawValue': '1.2'
       },
       'operator': '+',
       'right': {
@@ -805,57 +753,28 @@ const parserFixtures: IParserFixtures = {
       }
     }
   },
-  '1_2+0b11_00': {
+  '1_2.3_4+1e1_2_3': {
     'type': 'Expression',
     'start': 0,
-    'end': 11,
+    'end': 15,
     'expression': {
       'type': 'BinaryExpression',
       'start': 0,
-      'end': 11,
+      'end': 15,
       'left': {
         'type': 'NumericLiteral',
         'start': 0,
-        'end': 3,
-        'value': '12',
-        'rawValue': '1_2',
-        'radix': 10,
+        'end': 7,
+        'value': '12.34',
+        'rawValue': '1_2.3_4'
       },
       'operator': '+',
       'right': {
         'type': 'NumericLiteral',
-        'start': 4,
-        'end': 11,
-        'value': '1100',
-        'rawValue': '0b11_00',
-        'radix': 2,
-      }
-    }
-  },
-  '0o7654*0xFF00': {
-    'type': 'Expression',
-    'start': 0,
-    'end': 13,
-    'expression': {
-      'type': 'BinaryExpression',
-      'start': 0,
-      'end': 13,
-      'left': {
-        'type': 'NumericLiteral',
-        'start': 0,
-        'end': 6,
-        'value': '7654',
-        'rawValue': '0o7654',
-        'radix': 8,
-      },
-      'operator': '*',
-      'right': {
-        'type': 'NumericLiteral',
-        'start': 7,
-        'end': 13,
-        'value': 'FF00',
-        'rawValue': '0xFF00',
-        'radix': 16,
+        'start': 8,
+        'end': 15,
+        'value': '1e123',
+        'rawValue': '1e1_2_3'
       }
     }
   }

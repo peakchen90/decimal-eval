@@ -34,23 +34,6 @@ export function useAdapter(adapter: IAdapter): void {
 }
 
 /**
- * 返回非十进制数字的字符串
- */
-export type GetRadixNumber = (value: string, radix: 2 | 8 | 16) => string;
-
-let _getRadixNumber: GetRadixNumber = (value, radix) => {
-  return parseInt(value, radix).toString();
-};
-
-export function useGetRadixNumber(getRadixNumber: GetRadixNumber): void {
-  if (typeof getRadixNumber !== 'function') {
-    throw new Error('argument should be a function');
-  }
-  _getRadixNumber = getRadixNumber;
-}
-
-
-/**
  * 二元表达式计算
  * @param left
  * @param right
@@ -125,10 +108,7 @@ export function transform(node: Node | string, scope: Record<string, number | st
           node.operator
         );
       case 'NumericLiteral':
-        if (node.radix === 10) {
-          return node.value;
-        }
-        return _getRadixNumber(node.value, node.radix);
+        return node.value;
       case 'Identifier':
         scopeValue = scope[node.name];
         if (scopeValue === undefined) {

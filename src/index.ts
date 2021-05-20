@@ -21,15 +21,7 @@ const bigJSAdapter: Readonly<IAdapter> = {
 };
 
 Parser.useAdapter(bigJSAdapter);
-Parser.useGetRadixNumber((value, radix) => {
-  let res = new Big(0);
-  for (let i = value.length - 1; i >= 0; i--) {
-    res = res.add(
-      new Big(radix).pow(value.length - i - 1).times(value[i])
-    );
-  }
-  return res.toString();
-});
+
 
 export default DecimalEval;
 export * from './pure';
