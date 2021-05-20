@@ -9,6 +9,11 @@ describe('Evaluate', () => {
     expect(evaluate('0.1 + 0.2')).toBe('0.3');
   });
 
+  // big number
+  test('9007199254740992 + 1', () => {
+    expect(evaluate('9007199254740992 + 1')).toBe('9007199254740993');
+  });
+
   test('0.3 - 0.1', () => {
     expect(evaluate('0.3 - 0.1')).toBe('0.2');
   });

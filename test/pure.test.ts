@@ -4,6 +4,7 @@ import {IAdapter} from '../src/transform';
 describe('Pure', () => {
   test('evaluate with default adapter', () => {
     expect(evaluate('0.1 + 0.2')).toBe('0.30000000000000004');
+    expect(evaluate('9007199254740992 + 1')).toBe('9007199254740992');
     expect(evaluate('3 - 5')).toBe('-2');
     expect(evaluate('2 * 4')).toBe('8');
     expect(evaluate('20 / 2')).toBe('10');
