@@ -43,9 +43,10 @@ export class TokenType {
 }
 
 export const tokenTypes = {
+  start: new TokenType('start'),
+  end: new TokenType('end'),
   parenL: new TokenType('('),
   parenR: new TokenType(')'),
-  end: new TokenType('end'),
   numeric: new TokenType('numeric'),
   identifier: new TokenType('identifier'),
   plus: new TokenType('+', {isBinary: true, precedence: 13}),

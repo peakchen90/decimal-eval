@@ -10,7 +10,7 @@ export default class Parser {
   readonly input: string // 输入的解析字符串
   node: Node | null | undefined // 解析后的 AST 节点
   pos: number // 当前位置
-  type: TokenType // 当前 Token 的类型
+  tokenType: TokenType // 当前 Token 的类型
   value: string  // 当前 Token 的值
   start: number // 当前 Token 的开始位置
   end: number // 当前 Token 的结束位置
@@ -38,7 +38,7 @@ export default class Parser {
    */
   constructor(input: string) {
     this.input = String(input);
-    this.type = tt.end;
+    this.tokenType = tt.start;
     this.value = '';
     this.pos = 0;
     this.start = 0;
@@ -68,12 +68,12 @@ export default class Parser {
   parse(): Node | null {
     this.next();
     const node = this.startNode(this.start);
-    if (this.type === tt.end) {
+    if (this.tokenType === tt.end) {
       return this.node = null; // 空字符
     }
 
     node.expression = this.parseExpression();
-    if (this.type !== tt.end) { // 其后遇到其他非法字符
+    if (this.tokenType !== tt.end) { // 其后遇到其他非法字符
       this.unexpected(this.value);
     }
     return this.node = this.finishNode(node, 'Expression');
@@ -92,7 +92,7 @@ export default class Parser {
    * @param minPrecedence 当前上下文的优先级
    */
   parseExprAtom(leftStartPos: number, minPrecedence: number): Node {
-    if (this.type === tt.parenL) { // 遇到 `(` 则递归解析表达式原子
+    if (this.tokenType === tt.parenL) { // 遇到 `(` 则递归解析表达式原子
       this.next();
       const left = this.parseExprAtom(this.start, -1);
       this.expect(tt.parenR);
@@ -114,8 +114,8 @@ export default class Parser {
     leftStartPos: number,
     minPrecedence: number
   ): Node {
-    const precedence = this.type.precedence;
-    if (this.type.isBinary && precedence > minPrecedence) { // 比较当前运算符与上下文优先级
+    const precedence = this.tokenType.precedence;
+    if (this.tokenType.isBinary && precedence > minPrecedence) { // 比较当前运算符与上下文优先级
       const node = this.startNode(leftStartPos);
       const operator = this.value;
       this.next();
@@ -141,13 +141,13 @@ export default class Parser {
    * @param minPrecedence 当前上下文的优先级
    */
   parseMaybeUnary(minPrecedence: number): Node {
-    const precedence = this.type.precedence;
+    const precedence = this.tokenType.precedence;
     const node = this.startNode();
     const start = this.start;
     const value = this.value;
 
     // Note: `1 ++ 1` 会当作 `1 + (+1)` 对待，与 JS 会作为 `1++` 对待不同
-    if (this.type.isPrefix) {
+    if (this.tokenType.isPrefix) {
       if (precedence >= minPrecedence) { // 相同优先级的一元运算符可以连续
         node.operator = value;
         node.prefix = true;
@@ -157,13 +157,13 @@ export default class Parser {
       }
     }
 
-    if (this.type === tt.numeric) {
+    if (this.tokenType === tt.numeric) {
       node.value = value;
       this.next();
       return this.finishNode(node, 'NumericLiteral');
     }
 
-    if (this.type === tt.identifier) {
+    if (this.tokenType === tt.identifier) {
       node.name = value;
       this.next();
       return this.finishNode(node, 'Identifier');
@@ -182,7 +182,7 @@ export default class Parser {
 
     this.start = this.pos;
     if (this.pos >= this.input.length) {
-      if (this.type === tt.end) return;
+      if (this.tokenType === tt.end) return;
       return this.finishToken(tt.end);
     } else {
       return this.readToken();
@@ -193,7 +193,7 @@ export default class Parser {
    * 读取一个 token
    */
   readToken(): void {
-    const code = this.input.charCodeAt(this.pos);
+    const code = this.codeAt(this.pos);
     if (isNumericStart(code)) {
       return this.readNumeric();
     }
@@ -203,59 +203,67 @@ export default class Parser {
   /**
    * 读取一个数字
    */
+  // eslint-disable-next-line complexity
   readNumeric(): void {
     const chunkStart = this.pos;
-    let allowE = false;
+    let countE = -1;
     let allowDot = true;
-    let lastCode;
-    let lastChar;
-
-    const isSingleChar = (): boolean => {
-      return this.pos - chunkStart === 1;
-    };
+    let allowUnderline = false;
+    let expectANumber = false; // 是否期望字符是数字
 
     while (this.pos < this.input.length) {
-      const code = this.input.charCodeAt(this.pos);
-      const char = this.input[this.pos];
+      const code = this.codeAt(this.pos);
 
-      if (isNumericChar(code)) {
-        if (code === 69 || code === 101) { // `E` / `e`
-          if (allowE && !(lastCode === 46 && isSingleChar())) { // 单字符 `.` 后不能跟 `E`
-            allowE = false;
-            allowDot = false;
-            const nextCode = this.input.charCodeAt(this.pos + 1);
-            if (nextCode === 43 || nextCode === 45) { // `+` / `-`
-              this.pos++;
-              lastCode = nextCode;
-              lastChar = this.input[this.pos];
-            }
-          } else {
-            this.unexpected(char, this.pos);
-          }
-        } else if (code === 46) { // .
-          if (allowDot) {
-            allowDot = false;
-          } else {
-            this.unexpected(char, this.pos);
-          }
+      if (isNumericChar(code)) { // 0-9
+        if (countE === -1) {
+          countE = 0;
         }
-        if (!lastChar && !allowE) allowE = true;
-        lastCode = code;
-        lastChar = char;
+        this.pos++;
+        expectANumber = false;
+        allowUnderline = true;
+      } else if (expectANumber) {
+        break;
+      } else if (countE === 0 && (code === 69 || code === 101)) { // `E` / `e`
+        countE++;
+        this.pos++;
+        if (
+          this.pos < this.input.length &&
+          (this.codeAt(this.pos) === 43 || this.codeAt(this.pos) === 45) // `+` / `-`
+        ) {
+          this.pos++;
+        }
+        allowDot = false;
+        expectANumber = true;
+      } else if (allowDot && code === 46) { // '.'
+        allowDot = false;
+        this.pos++;
+        if (this.pos - chunkStart > 1) {
+          // `.` 字符紧跟着的字符必须是一个 数字 或者 'E'
+          if (!(
+            this.pos === this.input.length || // 以 `.` 字符结尾
+            isNumericChar(this.codeAt(this.pos)) || // 0-9
+            this.codeAt(this.pos) === 69 || // `E`
+            this.codeAt(this.pos) === 101) // `e`
+          ) {
+            this.unexpected(this.input[this.pos - 1], this.pos - 1);
+          }
+        } else { // `.` 作为首字符，紧跟着的字符必须是一个数字
+          expectANumber = true;
+        }
+      } else if (allowUnderline && code === 95) { // '_'
+        expectANumber = true;
         this.pos++;
       } else {
         break;
       }
     }
 
-    if (
-      lastCode === 69 // `E`
-      || lastCode === 101 // `e`
-      || lastCode === 43 // `+`
-      || lastCode === 45 // `-`
-      || (isSingleChar() && lastCode === 46) // 单字符 `.`
-    ) {
-      this.unexpected(lastChar, this.pos - 1);
+    if (expectANumber) {
+      if(this.pos < this.input.length) {
+        this.unexpected(this.input[this.pos], this.pos);
+      } else {
+        this.unexpected(this.input[this.pos - 1], this.pos - 1);
+      }
     }
 
     const value = this.input.slice(chunkStart, this.pos);
@@ -266,14 +274,14 @@ export default class Parser {
    * 根据字符 code 读取一个 Token，包括自定义注册的运算符
    */
   readTokenFromCode(): void {
-    const code = this.input.charCodeAt(this.pos);
+    const code = this.codeAt(this.pos);
 
     // 优先解析自定义运算符
     let operator, i, j;
     for (i = 0; i < installedOperators.length; i++) {
       const op = installedOperators[i];
       for (j = 0; j < op.codes.length; j++) {
-        if (op.codes[j] !== this.input.charCodeAt(this.pos + j)) break;
+        if (op.codes[j] !== this.codeAt(this.pos + j)) break;
       }
       if (j === op.codes.length) {
         operator = op;
@@ -325,7 +333,7 @@ export default class Parser {
   readIdentifier(): void {
     const chunkStart = this.pos;
     while (this.pos < this.input.length) {
-      const code = this.input.charCodeAt(this.pos);
+      const code = this.codeAt(this.pos);
       if (isIdentifierChar(code)) {
         this.pos++;
       } else {
@@ -342,9 +350,9 @@ export default class Parser {
    * @param value
    */
   finishToken(type: TokenType, value = ''): void {
-    const prevType = this.type;
+    const prevType = this.tokenType;
     this.end = this.pos;
-    this.type = type;
+    this.tokenType = type;
     this.value = value;
 
     this.updateContext(prevType);
@@ -355,12 +363,16 @@ export default class Parser {
    * @param prevType
    */
   updateContext(prevType: TokenType): void {
-    const type = this.type;
+    const type = this.tokenType;
     if (type.isBinary || type.isPrefix) {
       this.allowPrefix = true;
     } else if (type.updateContext) {
       type.updateContext.call(this, prevType);
     }
+  }
+
+  codeAt(index: number): number {
+    return this.input.charCodeAt(index);
   }
 
   /**
@@ -386,11 +398,11 @@ export default class Parser {
    */
   skipSpace(): void {
     while (this.pos < this.input.length) {
-      const code = this.input.charCodeAt(this.pos);
+      const code = this.codeAt(this.pos);
       if (code === 32 || code === 160) { // ` `
         this.pos++;
       } else if (code === 13 || code === 10 || code === 8232 || code === 8233) { // new line
-        if (code === 13 && this.input.charCodeAt(this.pos + 1) === 10) { // CRLF
+        if (code === 13 && this.codeAt(this.pos + 1) === 10) { // CRLF
           this.pos++;
         }
         this.pos++;
@@ -417,7 +429,7 @@ export default class Parser {
    * @param type
    */
   eat(type: TokenType): boolean {
-    if (this.type === type) {
+    if (this.tokenType === type) {
       this.next();
       return true;
     }

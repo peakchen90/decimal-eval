@@ -64,7 +64,7 @@
     "globals": {
       "__VERSION__": true,
       "ts-jest": {
-        "tsConfig": {
+        "tsconfig": {
           "target": "es6",
           "sourceMap": true
         }

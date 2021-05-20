@@ -1,11 +1,11 @@
 import Parser from '../src/parser';
-import fixtures from './fixtures';
+import parserFixtures from './parser.fixtures';
 
 describe('Parser Fixtures', () => {
-  Object.keys(fixtures).forEach(expr => {
+  Object.keys(parserFixtures).forEach(expr => {
     test(`Test expression: \`${expr}\``, () => {
       const ast = new Parser(expr).parse();
-      expect(ast).toEqual(fixtures[expr]);
+      expect(ast).toEqual(parserFixtures[expr]);
     });
   });
 });

@@ -1,13 +1,13 @@
 import {Node} from '../src/parser/util';
 
-interface IFixtures {
+interface IParserFixtures {
   [key: string]: Node;
 }
 
 /**
  * AST node fixtures
  */
-const fixtures: IFixtures = {
+const parserFixtures: IParserFixtures = {
   '1': {
     'type': 'Expression',
     'start': 0,
@@ -715,4 +715,4 @@ const fixtures: IFixtures = {
   }
 };
 
-export default fixtures;
+export default parserFixtures;
