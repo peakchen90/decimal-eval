@@ -1,5 +1,5 @@
 import {TokenType, tokenTypes, tokenTypes as tt} from './token-type';
-import {isNumericStart, isNumericChar, Node, NodeType, isIdentifierChar, isIdentifierStart} from './util';
+import {isNumericStart, isNumericChar, Node, NodeType, isIdentifierChar, isIdentifierStart, getNumericRadix, getNumericRawData} from './util';
 import Operator, {BinaryCalcMethod, installedOperators, UnaryCalcMethod} from '../operator';
 import {IAdapter, transform} from '../transform';
 
@@ -158,7 +158,10 @@ export default class Parser {
     }
 
     if (this.tokenType === tt.numeric) {
-      node.value = value;
+      const rawData = getNumericRawData(value);
+      node.value = rawData.value;
+      node.rawValue = rawData.rawValue;
+      node.radix = rawData.radix;
       this.next();
       return this.finishNode(node, 'NumericLiteral');
     }
@@ -195,21 +198,11 @@ export default class Parser {
   readToken(): void {
     const code = this.codeAt(this.pos);
     if (isNumericStart(code)) {
-      if (code === 48) { // `0`
-        const next = this.codeAt(this.pos + 1);
-        let radix = -1;
-        if (next === 66 || next === 98) { // `B` / `b`
-          radix = 2;
-        } else if (next === 79 || next === 111) { // `O` / `o`
-          radix = 8;
-        } else if (next === 88 || next === 120) { // `X` / `x`
-          radix = 16;
-        }
-        if (radix >= 0) {
-          return this.readNumericWithRadix(radix);
-        }
+      const radix = getNumericRadix(this.input, this.pos);
+      if (radix === 10) {
+        return this.readNumeric();
       }
-      return this.readNumeric();
+      return this.readNumericWithRadix(radix);
     }
     return this.readTokenFromCode();
   }
@@ -255,7 +248,7 @@ export default class Parser {
         }
         allowDot = false;
         expectANumber = true;
-      } else if (code === 46) { // '.'
+      } else if (code === 46) { // `.`
         if (!allowDot) {
           unexpectedPos = this.pos;
           break;
@@ -266,7 +259,7 @@ export default class Parser {
         if (this.pos - chunkStart === 1) {
           expectANumber = true;
         }
-      } else if (code === 95) { // '_'
+      } else if (code === 95) { // `_`
         if (!allowUnderline) {
           unexpectedPos = this.pos;
           break;
@@ -315,7 +308,7 @@ export default class Parser {
       ) {
         allowUnderline = true;
         this.pos++;
-      } else if (code === 95) { // '_'
+      } else if (code === 95) { // `_`
         if (!allowUnderline) {
           unexpectedPos = this.pos;
           break;
@@ -337,7 +330,7 @@ export default class Parser {
     }
 
     const value = this.input.slice(chunkStart, this.pos);
-    this.finishToken(tt.radixNumeric, value);
+    this.finishToken(tt.numeric, value);
   }
 
   /**

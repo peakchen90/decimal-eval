@@ -78,25 +78,25 @@ const tokenFixtures: ITokenFixtures = {
   },
   // special number
   '0b1100': {
-    tokenType: tokenTypes.radixNumeric
+    tokenType: tokenTypes.numeric
   },
   '0B1100': {
-    tokenType: tokenTypes.radixNumeric
+    tokenType: tokenTypes.numeric
   },
   '0o7654': {
-    tokenType: tokenTypes.radixNumeric
+    tokenType: tokenTypes.numeric
   },
   '0O7654': {
-    tokenType: tokenTypes.radixNumeric
+    tokenType: tokenTypes.numeric
   },
   '0xFa12': {
-    tokenType: tokenTypes.radixNumeric
+    tokenType: tokenTypes.numeric
   },
   '0Xfa12': {
-    tokenType: tokenTypes.radixNumeric
+    tokenType: tokenTypes.numeric
   },
   '0xf_a_3': {
-    tokenType: tokenTypes.radixNumeric
+    tokenType: tokenTypes.numeric
   },
   '0b2': {
     error: 'Unexpected token 2 at position 2'
