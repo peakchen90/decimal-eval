@@ -7,23 +7,23 @@ beforeEach(() => {
 
 describe('Binary Operator', () => {
   test('custom binary operator: `%`', () => {
-    const mod = Operator.create('%', 14, (a, b) => a % b);
+    const mod = Operator.create('%', 14, (a, b) => String(Number(a) % Number(b)));
     Parser.useOperator(mod);
-    expect(evaluate('2 % 3')).toBe(2);
-    expect(evaluate('2 % 3 + 5')).toBe(7);
+    expect(evaluate('2 % 3')).toBe('2');
+    expect(evaluate('2 % 3 + 5')).toBe('7');
   });
 
   test('custom binary operator: `**`', () => {
-    const pow = Operator.create('**', 15, (a, b) => Math.pow(a, b));
+    const pow = Operator.create('**', 15, (a, b) => String(Math.pow(Number(a), Number(b))));
     Parser.useOperator(pow);
-    expect(evaluate('2 ** 3')).toBe(8);
-    expect(evaluate('2 ** 3 - 1')).toBe(7);
+    expect(evaluate('2 ** 3')).toBe('8');
+    expect(evaluate('2 ** 3 - 1')).toBe('7');
   });
 
   test('custom binary operator: use a identifier', () => {
-    const add = Operator.create('add', 13, (a, b) => a + b);
+    const add = Operator.create('add', 13, (a, b) => String(Number(a) + Number(b)));
     Parser.useOperator(add);
-    expect(evaluate('2 add 3')).toBe(5);
+    expect(evaluate('2 add 3')).toBe('5');
   });
 
   test('cannot use reserved character as operator', () => {
@@ -64,23 +64,23 @@ describe('Binary Operator', () => {
 
 describe('Unary Operator', () => {
   test('custom unary operator: high precedence `double`', () => {
-    const doubleOp = Operator.create('double', 19, (v) => v * 2, true);
+    const doubleOp = Operator.create('double', 19, (v) => String(v * 2), true);
     Parser.useOperator(doubleOp);
-    expect(evaluate('double1.5')).toBe(3);
-    expect(evaluate('double .035 * 100')).toBe(7);
+    expect(evaluate('double1.5')).toBe('3');
+    expect(evaluate('double .035 * 100')).toBe('7');
   });
 
   test('custom unary operator: low precedence `double`', () => {
-    const doubleOp = Operator.create('double', 0, (v) => v * 2, true);
+    const doubleOp = Operator.create('double', 0, (v) => String(v * 2), true);
     Parser.useOperator(doubleOp);
-    expect(evaluate('double 1 + 4 - 2')).toBe(6);
+    expect(evaluate('double 1 + 4 - 2')).toBe('6');
   });
 
   test('custom unary operator chain', () => {
-    const doubleOp = Operator.create('double', 0, (v) => v * 2, true);
-    const absOp = Operator.create('abs', 0, (v) => Math.abs(v), true);
+    const doubleOp = Operator.create('double', 0, (v) => String(v * 2), true);
+    const absOp = Operator.create('abs', 0, (v) => String(Math.abs(v)), true);
     Parser.useOperator(doubleOp);
     Parser.useOperator(absOp);
-    expect(evaluate('abs double 2 - 10')).toBe(16);
+    expect(evaluate('abs double 2 - 10')).toBe('16');
   });
 });

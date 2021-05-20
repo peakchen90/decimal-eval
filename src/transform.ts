@@ -5,18 +5,18 @@ import Operator, {installedOperators, UnaryCalcMethod} from './operator';
  * 二元表达式计算方法适配器
  */
 export interface IAdapter {
-  '+': (left: number, right: number) => number;
-  '-': (left: number, right: number) => number;
-  '*': (left: number, right: number) => number;
-  '/': (left: number, right: number) => number;
+  '+': (left: string, right: string) => string;
+  '-': (left: string, right: string) => string;
+  '*': (left: string, right: string) => string;
+  '/': (left: string, right: string) => string;
 }
 
 // 计算方法适配
 export let _adapter: IAdapter = {
-  '+': (left, right) => left + right,
-  '-': (left, right) => left - right,
-  '*': (left, right) => left * right,
-  '/': (left, right) => left / right
+  '+': (left, right) => String(Number(left) + Number(right)),
+  '-': (left, right) => String(Number(left) - Number(right)),
+  '*': (left, right) => String(Number(left) * Number(right)),
+  '/': (left, right) => String(Number(left) / Number(right)),
 };
 
 /**
@@ -41,10 +41,10 @@ export function useAdapter(adapter: IAdapter): void {
  * @param operator
  */
 export function binaryCalculation(
-  left: number,
-  right: number,
+  left: string,
+  right: string,
   operator: string
-): number {
+): string {
   switch (operator) {
     case '+':
     case '-':
@@ -68,12 +68,12 @@ export function binaryCalculation(
  * @param value
  * @param operator
  */
-export function unaryCalculation(value: number, operator: string): number {
+export function unaryCalculation(value: string, operator: string): string {
   switch (operator) {
     case '+':
       return value;
     case '-':
-      return -value;
+      return String(-value);
     default:
       for (let i = 0; i < installedOperators.length; i++) {
         const op = installedOperators[i] as Operator<UnaryCalcMethod>;
@@ -91,7 +91,7 @@ export function unaryCalculation(value: number, operator: string): number {
  * @param node
  * @param scope
  */
-export function transform(node: Node | number, scope: Record<string, number> = {}): Node | number {
+export function transform(node: Node | string, scope: Record<string, number | string> = {}): Node | string {
   if (node instanceof Node) {
     let scopeValue;
     switch (node.type) {
@@ -99,27 +99,30 @@ export function transform(node: Node | number, scope: Record<string, number> = {
         return transform(node.expression, scope);
       case 'BinaryExpression':
         return binaryCalculation(
-          transform(node.left, scope) as number,
-          transform(node.right, scope) as number,
+          transform(node.left, scope) as string,
+          transform(node.right, scope) as string,
           node.operator
         );
       case 'UnaryExpression':
         return unaryCalculation(
-          transform(node.argument, scope) as number,
+          transform(node.argument, scope) as string,
           node.operator
         );
       case 'NumericLiteral':
-        return Number(node.value);
+        if (node.radix === 10) {
+          return node.value;
+        }
+        return parseInt(node.value, node.radix).toString();
       case 'Identifier':
         scopeValue = scope[node.name];
         if (scopeValue === undefined) {
           throw new Error(`The scope \`${node.name}\` corresponding value was not found`);
         }
-        return Number(scopeValue);
+        return String(scopeValue);
       default:
         /* istanbul ignore next */
         throw new Error(`Unexpected type: ${node.type}`);
     }
   }
-  return Number(node);
+  return node;
 }

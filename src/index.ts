@@ -7,16 +7,16 @@ import {IAdapter} from './transform';
  */
 const bigJSAdapter: Readonly<IAdapter> = {
   '+': (left, right) => {
-    return Number(new Big(left).plus(right));
+    return new Big(left).plus(right).toString();
   },
   '-': (left, right) => {
-    return Number(new Big(left).minus(right));
+    return new Big(left).minus(right).toString();
   },
   '*': (left, right) => {
-    return Number(new Big(left).times(right));
+    return new Big(left).times(right).toString();
   },
   '/': (left, right) => {
-    return Number(new Big(left).div(right));
+    return new Big(left).div(right).toString();
   }
 };
 

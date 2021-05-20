@@ -22,7 +22,7 @@ export default class Parser {
   static useOperator: (operator: Operator<BinaryCalcMethod | UnaryCalcMethod>) => void
   static useAdapter: (adapter: IAdapter) => void
 
-  static evaluate(expression: string, scope?: Record<string, number>): number {
+  static evaluate(expression: string, scope?: Record<string, number>): string {
     return new Parser(expression).compile()(scope);
   }
 
@@ -51,14 +51,14 @@ export default class Parser {
   /**
    * 编译表达式
    */
-  compile(): (scope?: Record<string, number>) => number {
+  compile(): (scope?: Record<string, number>) => string {
     let node = this.node;
     if (node === undefined) {
       node = this.parse();
     }
-    return (scope?: Record<string, number>): number => {
-      if (!node) return 0;
-      return transform(node, scope ?? {}) as number;
+    return (scope?: Record<string, number>): string => {
+      if (!node) return '0';
+      return transform(node, scope ?? {}) as string;
     };
   }
 

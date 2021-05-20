@@ -1,8 +1,8 @@
 import {TokenType} from './parser/token-type';
 import {isNumericStart} from './parser/util';
 
-export type BinaryCalcMethod = (left: number, right: number) => number;
-export type UnaryCalcMethod = (value: number) => number;
+export type BinaryCalcMethod = (left: string, right: string) => string;
+export type UnaryCalcMethod = (value: string) => string;
 export type OperatorMethod = BinaryCalcMethod | UnaryCalcMethod;
 
 // 保留字符
