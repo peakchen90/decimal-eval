@@ -77,36 +77,39 @@ const tokenFixtures: ITokenFixtures = {
     error: 'Unexpected token _ at position 2'
   },
   // special number
-  // '0b1100': {
-  //   tokenType: tokenTypes.numeric
-  // },
-  // '0B1100': {
-  //   tokenType: tokenTypes.numeric
-  // },
-  // '0o7654': {
-  //   tokenType: tokenTypes.numeric
-  // },
-  // '0O7654': {
-  //   tokenType: tokenTypes.numeric
-  // },
-  // '0xFa12': {
-  //   tokenType: tokenTypes.numeric
-  // },
-  // '0Xfa12': {
-  //   tokenType: tokenTypes.numeric
-  // },
-  // '0xf_a_3': {
-  //   tokenType: tokenTypes.numeric
-  // },
-  // '0b2': {
-  //   error: 'TODO'
-  // },
-  // '0o8': {
-  //  error: 'TODO'
-  // },
-  // '0xg': {
-  //  error: 'TODO'
-  // },
+  '0b1100': {
+    tokenType: tokenTypes.radixNumeric
+  },
+  '0B1100': {
+    tokenType: tokenTypes.radixNumeric
+  },
+  '0o7654': {
+    tokenType: tokenTypes.radixNumeric
+  },
+  '0O7654': {
+    tokenType: tokenTypes.radixNumeric
+  },
+  '0xFa12': {
+    tokenType: tokenTypes.radixNumeric
+  },
+  '0Xfa12': {
+    tokenType: tokenTypes.radixNumeric
+  },
+  '0xf_a_3': {
+    tokenType: tokenTypes.radixNumeric
+  },
+  '0b2': {
+    error: 'Unexpected token 2 at position 2'
+  },
+  '0b_1': {
+    error: 'Unexpected token _ at position 2'
+  },
+  '0o8': {
+   error: 'Unexpected token 8 at position 2'
+  },
+  '0xg': {
+   error: 'Unexpected token g at position 2'
+  },
 
   // identifier
   'A': {
@@ -115,10 +118,7 @@ const tokenFixtures: ITokenFixtures = {
   'a': {
     tokenType: tokenTypes.identifier
   },
-  '$': {
-    tokenType: tokenTypes.identifier
-  },
-  'a$1_B': {
+  'a1_B': {
     tokenType: tokenTypes.identifier
   },
 

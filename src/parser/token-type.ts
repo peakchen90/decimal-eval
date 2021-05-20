@@ -48,6 +48,7 @@ export const tokenTypes = {
   parenL: new TokenType('('),
   parenR: new TokenType(')'),
   numeric: new TokenType('numeric'),
+  radixNumeric: new TokenType('radixNumeric'),
   identifier: new TokenType('identifier'),
   plus: new TokenType('+', {isBinary: true, precedence: 13}),
   minus: new TokenType('-', {isBinary: true, precedence: 13}),

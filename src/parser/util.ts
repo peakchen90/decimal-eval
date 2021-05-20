@@ -43,7 +43,6 @@ export function isNumericStart(code: number): boolean {
 export function isIdentifierStart(code: number): boolean {
   if (code >= 65 && code <= 90) return true; // A-Z
   if (code >= 97 && code <= 122) return true; // a-z
-  if (code === 36) return true; // `$`
   return false;
 }
 

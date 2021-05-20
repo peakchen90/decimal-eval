@@ -183,9 +183,9 @@ export default class Parser {
     this.start = this.pos;
     if (this.pos >= this.input.length) {
       if (this.tokenType === tt.end) return;
-      return this.finishToken(tt.end);
+      this.finishToken(tt.end);
     } else {
-      return this.readToken();
+      this.readToken();
     }
   }
 
@@ -195,6 +195,20 @@ export default class Parser {
   readToken(): void {
     const code = this.codeAt(this.pos);
     if (isNumericStart(code)) {
+      if (code === 48) { // `0`
+        const next = this.codeAt(this.pos + 1);
+        let radix = -1;
+        if (next === 66 || next === 98) { // `B` / `b`
+          radix = 2;
+        } else if (next === 79 || next === 111) { // `O` / `o`
+          radix = 8;
+        } else if (next === 88 || next === 120) { // `X` / `x`
+          radix = 16;
+        }
+        if (radix >= 0) {
+          return this.readNumericWithRadix(radix);
+        }
+      }
       return this.readNumeric();
     }
     return this.readTokenFromCode();
@@ -203,7 +217,6 @@ export default class Parser {
   /**
    * 读取一个数字
    */
-  // eslint-disable-next-line complexity
   readNumeric(): void {
     const chunkStart = this.pos;
     let countE = -1; // 统计字符 `e` 出现次数，-1 表示当前位置不允许出现 `e`
@@ -212,7 +225,7 @@ export default class Parser {
     let expectANumber = false; // 是否期望字符是数字
     let unexpectedPos = -1;
 
-    while (this.pos < this.input.length) {
+    while (this.isValidPosition()) {
       const code = this.codeAt(this.pos);
 
       if (isNumericChar(code)) { // 0-9
@@ -235,7 +248,7 @@ export default class Parser {
         countE++;
         this.pos++;
         if (
-          this.pos < this.input.length &&
+          this.isValidPosition() &&
           (this.codeAt(this.pos) === 43 || this.codeAt(this.pos) === 45) // `+` / `-`
         ) {
           this.pos++;
@@ -259,6 +272,7 @@ export default class Parser {
           break;
         }
 
+        allowUnderline = false;
         expectANumber = true;
         this.pos++;
       } else {
@@ -274,7 +288,56 @@ export default class Parser {
     }
 
     const value = this.input.slice(chunkStart, this.pos);
-    return this.finishToken(tt.numeric, value);
+    this.finishToken(tt.numeric, value);
+  }
+
+  /**
+   * 读取一个非十进制数字
+   * @param radix
+   */
+  readNumericWithRadix(radix: number): void {
+    const chunkStart = this.pos;
+    let allowUnderline = false;
+    let unexpectedPos = -1;
+    this.pos += 2;
+
+    while (this.isValidPosition()) {
+      const code = this.codeAt(this.pos);
+
+      if (
+        (radix === 2 && (code >= 48 && code <= 49)) || // 0-1
+        (radix === 8 && (code >= 48 && code <= 55)) || // 0-7
+        (radix === 16 && (
+          isNumericStart(code) || // 0-9
+          (code >= 65 && code <= 70) || // A-F
+          (code >= 97 && code <= 102)  // a-f
+        ))
+      ) {
+        allowUnderline = true;
+        this.pos++;
+      } else if (code === 95) { // '_'
+        if (!allowUnderline) {
+          unexpectedPos = this.pos;
+          break;
+        }
+        allowUnderline = false;
+        this.pos++;
+      } else {
+        break;
+      }
+    }
+
+    if (isIdentifierStart(this.codeAt(this.pos))) {
+      unexpectedPos = this.pos;
+    } else if (this.pos - chunkStart === 2) {
+      unexpectedPos = this.pos;
+    }
+    if (unexpectedPos >= 0) {
+      this.unexpected(this.input[unexpectedPos], unexpectedPos);
+    }
+
+    const value = this.input.slice(chunkStart, this.pos);
+    this.finishToken(tt.radixNumeric, value);
   }
 
   /**
@@ -339,7 +402,7 @@ export default class Parser {
    */
   readIdentifier(): void {
     const chunkStart = this.pos;
-    while (this.pos < this.input.length) {
+    while (this.isValidPosition()) {
       const code = this.codeAt(this.pos);
       if (isIdentifierChar(code)) {
         this.pos++;
@@ -382,6 +445,10 @@ export default class Parser {
     return this.input.charCodeAt(index);
   }
 
+  isValidPosition(): boolean {
+    return this.pos < this.input.length;
+  }
+
   /**
    * 在当前位置创建一个新节点
    */
@@ -404,7 +471,7 @@ export default class Parser {
    * 跳过空白字符
    */
   skipSpace(): void {
-    while (this.pos < this.input.length) {
+    while (this.isValidPosition()) {
       const code = this.codeAt(this.pos);
       if (code === 32 || code === 160) { // ` `
         this.pos++;
