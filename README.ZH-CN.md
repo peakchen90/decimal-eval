@@ -1,7 +1,7 @@
 # decimal-eval
 一个小巧、安全、快速的 JavaScript 库，用于计算算术表达式。
 
-[![Travis (.org) branch](https://img.shields.io/travis/peakchen90/decimal-eval/master.svg)](https://travis-ci.org/peakchen90/decimal-eval)
+[![Build Status](https://www.travis-ci.com/peakchen90/decimal-eval.svg?branch=master)](https://www.travis-ci.com/peakchen90/decimal-eval)
 [![Codecov](https://img.shields.io/codecov/c/github/peakchen90/decimal-eval.svg)](https://codecov.io/gh/peakchen90/decimal-eval)
 [![npm](https://img.shields.io/npm/v/decimal-eval.svg)](https://www.npmjs.com/package/decimal-eval)
 [![BUNDLE SIZE](https://badgen.net/bundlephobia/minzip/decimal-eval)](https://bundlephobia.com/result?p=decimal-eval)
@@ -12,7 +12,7 @@
 
 ## 特性
 - :v: 使用 [big.js](https://github.com/MikeMcl/big.js) 自动处理 JavaScript 小数精度，并支持大整数
-- :rocket: 执行快、体积小，压缩后只有 16 KB, GZIP 后仅 5.8 KB
+- :rocket: 执行快、体积小，压缩后只有 17.2 KB, GZIP 后仅 5.9 KB
 - :writing_hand: 非常容易扩展自己的自定义运算符
 - :vulcan_salute: 支持表达式变量占位符
 

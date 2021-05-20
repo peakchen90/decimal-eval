@@ -1,7 +1,7 @@
 # decimal-eval
 A tiny, safe, fast JavaScript library for decimal arithmetic expressions.
 
-[![Travis (.org) branch](https://img.shields.io/travis/peakchen90/decimal-eval/master.svg)](https://travis-ci.org/peakchen90/decimal-eval)
+[![Build Status](https://www.travis-ci.com/peakchen90/decimal-eval.svg?branch=master)](https://www.travis-ci.com/peakchen90/decimal-eval)
 [![Codecov](https://img.shields.io/codecov/c/github/peakchen90/decimal-eval.svg)](https://codecov.io/gh/peakchen90/decimal-eval)
 [![npm](https://img.shields.io/npm/v/decimal-eval.svg)](https://www.npmjs.com/package/decimal-eval)
 [![BUNDLE SIZE](https://badgen.net/bundlephobia/minzip/decimal-eval)](https://bundlephobia.com/result?p=decimal-eval)
@@ -11,7 +11,7 @@ English | [简体中文](./README.ZH-CN.md)
 
 ## Features
 - :v: Automatically deal with the JavaScript decimal precision problem by [big.js](https://github.com/MikeMcl/big.js), and supports big number
-- :rocket: Fast and tiny, only 16 KB minified and 5.8 KB gzipped
+- :rocket: Fast and tiny, only 17.2 KB minified and 5.9 KB gzipped
 - :writing_hand: Easy to extend custom operator
 - :vulcan_salute: Supports expression scope variables
 
