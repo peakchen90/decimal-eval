@@ -13,7 +13,7 @@ const tokenFixtures: ITokenFixtures = {
   '1': {
     tokenType: tokenTypes.numeric,
   },
-  '1.': {
+  '1. ': {
     tokenType: tokenTypes.numeric
   },
   '.1': {
@@ -46,6 +46,9 @@ const tokenFixtures: ITokenFixtures = {
   '.': {
     error: 'Unexpected token . at position 0'
   },
+  '1.1.1': {
+    error: 'Unexpected token . at position 3'
+  },
   '1e': {
     error: 'Unexpected token e at position 1'
   },
@@ -54,6 +57,18 @@ const tokenFixtures: ITokenFixtures = {
   },
   '1e+-2': {
     error: 'Unexpected token - at position 3'
+  },
+  '1e2e3': {
+    error: 'Unexpected token e at position 3'
+  },
+  '1e_2': {
+    error: 'Unexpected token _ at position 2'
+  },
+  '1e+_2': {
+    error: 'Unexpected token _ at position 3'
+  },
+  '1_e': {
+    error: 'Unexpected token e at position 2'
   },
   '1_2_': {
     error: 'Unexpected token _ at position 3'

@@ -206,10 +206,11 @@ export default class Parser {
   // eslint-disable-next-line complexity
   readNumeric(): void {
     const chunkStart = this.pos;
-    let countE = -1;
+    let countE = -1; // 统计字符 `e` 出现次数，-1 表示当前位置不允许出现 `e`
     let allowDot = true;
     let allowUnderline = false;
     let expectANumber = false; // 是否期望字符是数字
+    let unexpectedPos = -1;
 
     while (this.pos < this.input.length) {
       const code = this.codeAt(this.pos);
@@ -222,8 +223,15 @@ export default class Parser {
         expectANumber = false;
         allowUnderline = true;
       } else if (expectANumber) {
+        unexpectedPos = this.pos;
+        expectANumber = false;
         break;
-      } else if (countE === 0 && (code === 69 || code === 101)) { // `E` / `e`
+      } else if (code === 69 || code === 101) { // `E` / `e`
+        if (countE !== 0) {
+          unexpectedPos = this.pos;
+          break;
+        }
+
         countE++;
         this.pos++;
         if (
@@ -234,23 +242,23 @@ export default class Parser {
         }
         allowDot = false;
         expectANumber = true;
-      } else if (allowDot && code === 46) { // '.'
+      } else if (code === 46) { // '.'
+        if (!allowDot) {
+          unexpectedPos = this.pos;
+          break;
+        }
+
         allowDot = false;
         this.pos++;
-        if (this.pos - chunkStart > 1) {
-          // `.` 字符紧跟着的字符必须是一个 数字 或者 'E'
-          if (!(
-            this.pos === this.input.length || // 以 `.` 字符结尾
-            isNumericChar(this.codeAt(this.pos)) || // 0-9
-            this.codeAt(this.pos) === 69 || // `E`
-            this.codeAt(this.pos) === 101) // `e`
-          ) {
-            this.unexpected(this.input[this.pos - 1], this.pos - 1);
-          }
-        } else { // `.` 作为首字符，紧跟着的字符必须是一个数字
+        if (this.pos - chunkStart === 1) {
           expectANumber = true;
         }
-      } else if (allowUnderline && code === 95) { // '_'
+      } else if (code === 95) { // '_'
+        if (!allowUnderline) {
+          unexpectedPos = this.pos;
+          break;
+        }
+
         expectANumber = true;
         this.pos++;
       } else {
@@ -259,11 +267,10 @@ export default class Parser {
     }
 
     if (expectANumber) {
-      if(this.pos < this.input.length) {
-        this.unexpected(this.input[this.pos], this.pos);
-      } else {
-        this.unexpected(this.input[this.pos - 1], this.pos - 1);
-      }
+      unexpectedPos = this.pos - 1;
+    }
+    if (unexpectedPos >= 0) {
+      this.unexpected(this.input[unexpectedPos], unexpectedPos);
     }
 
     const value = this.input.slice(chunkStart, this.pos);
