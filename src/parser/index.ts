@@ -1,7 +1,7 @@
 import {TokenType, tokenTypes, tokenTypes as tt} from './token-type';
 import {isNumericStart, isNumericChar, Node, NodeType, isIdentifierChar, isIdentifierStart, getNumericRadix, getNumericRawData} from './util';
-import Operator, {BinaryCalcMethod, installedOperators, UnaryCalcMethod} from '../operator';
-import {IAdapter, transform} from '../transform';
+import Operator, {createBinaryOperator, createUnaryOperator, installedOperators, useOperator} from '../operator';
+import {transform, useAdapter, useGetRadixNumber} from '../transform';
 
 /**
  * AST Parser
@@ -19,8 +19,11 @@ export default class Parser {
   allowPrefix: boolean // 当前上下文是否允许前缀
 
   // pubic static method
-  static useOperator: (operator: Operator<BinaryCalcMethod | UnaryCalcMethod>) => void
-  static useAdapter: (adapter: IAdapter) => void
+  static createBinaryOperator: typeof createBinaryOperator;
+  static createUnaryOperator: typeof createUnaryOperator;
+  static useOperator: typeof useOperator;
+  static useAdapter: typeof useAdapter;
+  static useGetRadixNumber: typeof useGetRadixNumber;
 
   static evaluate(expression: string, scope?: Record<string, number>): string {
     return new Parser(expression).compile()(scope);

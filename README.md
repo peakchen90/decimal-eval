@@ -10,7 +10,7 @@ A tiny, safe, fast JavaScript library for decimal arithmetic expressions.
 English | [简体中文](./README.ZH-CN.md)
 
 ## Features
-- :v: Automatically deal with the JavaScript decimal precision problem by [big.js](https://github.com/MikeMcl/big.js)
+- :v: Automatically deal with the JavaScript decimal precision problem by [big.js](https://github.com/MikeMcl/big.js), and supports big number
 - :rocket: Fast and tiny, only 16 KB minified and 5.8 KB gzipped
 - :writing_hand: Easy to extend custom operator
 - :vulcan_salute: Supports expression scope variables
@@ -26,16 +26,18 @@ npm i -S decimal-eval
 yarn add decimal-eval
 ```
 
+
 ### Usage
 Supports the four arithmetic operations (`+`, `-`, `*`, `/`),
-and automatically deal with JavaScript decimal precision by [big.js](https://github.com/MikeMcl/big.js).
+and automatically deal with JavaScript decimal precision by [big.js](https://github.com/MikeMcl/big.js), and supports big number.
 
 ```js
 import {evaluate} from 'decimal-eval';
 
-evaluate('0.1 + 0.2') // 0.3
-evaluate('100 * (0.08 - 0.01)'); // 7
-evaluate('1 + abc', { abc: 2 }); // 3
+evaluate('0.1 + 0.2') // '0.3'
+evaluate('100 * (0.08 - 0.01)'); // '7'
+evaluate('9007199254740992 + 1'); // '9007199254740993'
+evaluate('1 + abc', { abc: 2 }); // '3'
 ```
 
 In addition to the above operators, it also supports custom operator expansion,
@@ -43,96 +45,85 @@ and supports unary operators and binary operators.
 The operator precedence according to: [MDN operator precedence](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence).
 
 ```js
-import {evaluate, Parser, Operator} from 'decimal-eval';
+import {evaluate, Parser} from 'decimal-eval';
 
 // create binary operator `add`, the precedence is 13
-const addOp = Operator.create('add', 13, (left, right) => {
-  return left + right;
+const addOp = Parser.createBinaryOperator('add', 13, (left, right) => {
+  return String(Number(left) + Number(left));
 });
 
 // create unary operator `sin`, the precedence is 16
-const sinOp = Operator.create('sin', 16, (value) => {
-  return Math.sin(value);
-}, true);
+const sinOp = Parser.createUnaryOperator('sin', 16, (value) => {
+  return String(Math.sin(value));
+});
 
 // install custom operators
 Parser.useOperator(addOp);
 Parser.useOperator(sinOp);
 
 // same as: `1 + Math.sin(-2)`
-evaluate('1 add sin -2') // 0.09070257317431829
+evaluate('1 add sin -2') // '0.09070257317431829'
 ```
 
+
 ## API
-### `evaluate(expression: string, scope?: Record<string, number>): number`
-Parse the arithmetic expression and then calculate the result.
+### evaluate(expression: string, scope?: Record<string, number>): number
+Parse the arithmetic expression and then calculate the result. The name of scope has the following restrictions:
+- muse be start with `a-z` or `A-Z`
+- only includes `a-z`、`A-Z`、`0-9` and `_`
 
 ```js
 import {evaluate} from 'decimal-eval';
 
-evaluate('1 + 2'); // 3
-evaluate('1 + abc', { abc: 2 }); // 3
-```
-
-### Operator
-#### `Operator.create(value: string, precedence: number, calc: Function, isPrefix = false)`
-Create a custom operator, when `isPrefix` is true, create a unary operator (prefix operator), otherwise create a binary operator.
-
-```js
-import {Operator} from 'decimal-eval';
-// create operator `%`, which is a binary operator, the calc should like: `(left: number, right: number) => number`
-const modOp = Operator.create('%', 15, (left, right) => left % right);
-
-// `isPrefix` is true, that is a unary operator, the calc should like: `(value: number) => number`
-const absOp = Operator.create('abs', 16, (value) => Math.abs(value), true);
+evaluate('1 + 2'); // '3'
+evaluate('1 + abc', { abc: 2 }); // '3'
 ```
 
 ### Parser
 
-#### `new Parser(expression: string).parse(): AST`
+#### new Parser(expression: string).parse(): Node | null
 Parse arithmetic expressions.
 
 ```js
 import {Parser} from 'decimal-eval';
 
-const ast = new Parser('1 + 2').parse();
+const node = new Parser('1 + 2').parse();
 ```
 
-#### `new Parser(expression: string).compile(): (scope) => number`
+#### new Parser(expression: string).compile(): (scope: Record<string, number | string>) => string
 Compile and cache the arithmetic expression.
 
 ```js
 import {Parser} from 'decimal-eval';
 
 const evaluate = new Parser('1 + abc').compile();
-evaluate({ abc: 2 }); // 3
-evaluate({ abc: 9 }); // 10
-evaluate({ def: 1 }); // throw error, the variable `abc` is not defined
+evaluate({ abc: 2 }); // '3'
+evaluate({ abc: 9 }); // '10'
+evaluate({ def: 1 }); // throw error, the scope name `abc` is not initialized
 ```
 
-#### `Parser.useOperator(operator)`
-Install an operator created by the `Operator.create()` method.
+#### Parser.createBinaryOperator(value: string, precedence: number, calc: (left: string, right: string) => string): Operator
+Create a binary operator.
 
-```js
-import {Parser, Operator} from 'decimal-eval';
+#### Parser.createUnaryOperator(value: string, precedence: number, calc: (value: string) => string): Operator
+Create a unary operator.
 
-Parser.useOperator(
-  Operator.create('%', 15, (a,b) => a % b)
-)
-```
+#### Parser.useOperator(operator: Operator): void
+Install an operator which created by the `Parser.createBinaryOperator()` or `Parser.createUnaryOperator()` method.
 
-#### `Parser.useAdapter(adapter)`
+#### Parser.useAdapter(adapter)
 Set custom calculation adapter methods for four arithmetic (`+`, `-`, `*`, `/`).
 [Big.js](https://github.com/MikeMcl/big.js) is used by default.
 
 ```js
 Parser.useAdapter({
-  '+': (left, right) => left + right,
-  '-': (left, right) => left - right,
-  '*': (left, right) => left * right,
-  '/': (left, right) => left / right
+  '+': (left, right) => String(Number(left) + Number(right)),
+  '-': (left, right) => String(Number(left) - Number(right)),
+  '*': (left, right) => String(Number(left) * Number(right)),
+  '/': (left, right) => String(Number(left) / Number(right))
 })
 ```
+
 
 ## Advanced
 
@@ -147,7 +138,10 @@ import {evaluate, Parser} from 'decimal-eval/dist/pure';
 // Parser.useAdapter(adapter);
 
 // Does not deal with precision by default
-evaluate('0.1 + 0.2'); // 0.30000000000000004
+evaluate('0.1 + 0.2'); // '0.30000000000000004'
+
+// not supports big number by default
+evaluate('9007199254740992 + 1'); // '9007199254740992'
 ```
 
 ### Re-export `big.js`
@@ -156,7 +150,7 @@ Useful for deal JavaScript decimal precision problem without having to install [
 ```js
 import {Big} from 'decimal-eval';
 const val = new Big(0.1).plus(0.2);
-console.log(Number(val)); // 0.3
+console.log(String(val)); // '0.3'
 ```
 
 ### Precedence of built-in operators

@@ -51,6 +51,6 @@ describe('Scope Variables', () => {
     const evaluate = new Parser('1 + a * c').compile();
     expect(() => {
       evaluate({a: 0.2});
-    }).toThrowError('The scope `c` corresponding value was not found');
+    }).toThrowError('The scope name `c` is not initialized');
   });
 });

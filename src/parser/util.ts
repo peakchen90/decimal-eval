@@ -57,7 +57,7 @@ export function isIdentifierChar(code: number): boolean {
   return false;
 }
 
-type Radix = 2 | 8 | 10 | 16;
+export type Radix = 2 | 8 | 10 | 16;
 
 /**
  * 返回一个数字的进制

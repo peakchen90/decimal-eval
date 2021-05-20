@@ -24,6 +24,29 @@ export function useOperator(operator: Operator): void {
 }
 
 /**
+ * 检查参数
+ * @param value
+ * @param precedence
+ */
+function checkCreateArgs(value, precedence) {
+  if (typeof value !== 'string' || !/^\S+$/.test(value)) {
+    throw new Error('The custom operator should be a non-empty string');
+  }
+  if (reserved.includes(value)) {
+    throw new Error(`The custom operator cannot use reserved character, including: ${reserved.join(', ')}`);
+  }
+  if (isNumericStart(value.charCodeAt(0))) { // 0-9, `.`
+    throw new Error('The custom operator cannot start with a possible number, including: `.`, 0-9');
+  }
+  if (value.charCodeAt(0) === 63) { // `?`
+    throw new Error('The custom operator cannot start with `?`');
+  }
+  if (precedence != null && (typeof precedence !== 'number' || precedence < 0)) {
+    throw new Error('The precedence should be a number greater than 0');
+  }
+}
+
+/**
  * 运算符
  */
 export default class Operator<M extends OperatorMethod = BinaryCalcMethod> {
@@ -32,56 +55,45 @@ export default class Operator<M extends OperatorMethod = BinaryCalcMethod> {
   readonly type: TokenType;
   readonly calc: M
 
-  constructor(value: string, precedence: number, calc: M, isPrefix = false) {
+  constructor(value: string, precedence: number, calc: M, isUnary = false) {
     this.value = value;
     this.codes = value.split('').map((_, i) => value.charCodeAt(i));
     this.type = new TokenType(value, {
-      isBinary: !isPrefix,
-      isPrefix,
+      isBinary: !isUnary,
+      isPrefix: isUnary,
       precedence,
     });
     this.calc = calc;
   }
+}
 
-  /**
-   * 创建运算符
-   * @param value 运算符的值
-   * @param precedence 运算符优先级
-   * @param calc 计算方法
-   * @param isPrefix 是否可以作为前缀（一元运算符，仅支持运算符在左侧，计算方法 `calc` 只接收一个参数）
-   * @see 运算符优先级参考: https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
-   */
-  static create<M extends OperatorMethod>(
-    value: string,
-    precedence: number,
-    calc: M,
-    isPrefix = false
-  ): Operator {
-    if (typeof value !== 'string' || !/^\S+$/.test(value)) {
-      throw new Error('The custom operator should be a non-empty string');
-    }
-    if (reserved.includes(value)) {
-      throw new Error(`The custom operator cannot use reserved character, including: ${reserved.join(', ')}`);
-    }
-    if (isNumericStart(value.charCodeAt(0))) { // 0-9, `.`
-      throw new Error('The custom operator cannot start with a possible number, including: `.`, 0-9');
-    }
-    if (value.charCodeAt(0) === 63) { // `?`
-      throw new Error('The custom operator cannot start with `?`');
-    }
-    if (precedence != null && (typeof precedence !== 'number' || precedence < 0)) {
-      throw new Error('The precedence should be a number greater than 0');
-    }
-    if (typeof calc !== 'function') {
-      throw new Error(
-        `Expected to receive a calculation method, like: \`${
-          isPrefix
-            ? '(value) => -value'
-            : '(left, right) => left + right'
-        }\``
-      );
-    }
 
-    return new Operator(value, precedence, calc, isPrefix);
+/**
+ * 创建一个二元运算符
+ * @param value
+ * @param precedence
+ * @param calc
+ * @see 运算符优先级参考: https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
+ */
+export function createBinaryOperator(value: string, precedence: number, calc: BinaryCalcMethod): Operator {
+  checkCreateArgs(value, precedence);
+  if (typeof calc !== 'function') {
+    throw new Error('Expected to receive a calculation method, like: `(left, right) => String(left - right)`');
   }
+  return new Operator<BinaryCalcMethod>(value, precedence, calc, false);
+}
+
+/**
+ * 创建一个一元运算符
+ * @param value
+ * @param precedence
+ * @param calc
+ * * @see 运算符优先级参考: https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
+ */
+export function createUnaryOperator(value: string, precedence: number, calc: UnaryCalcMethod): Operator {
+  checkCreateArgs(value, precedence);
+  if (typeof calc !== 'function') {
+    throw new Error('Expected to receive a calculation method, like: `(value) => String(Math.abs(value))`');
+  }
+  return new Operator<UnaryCalcMethod>(value, precedence, calc, true);
 }
