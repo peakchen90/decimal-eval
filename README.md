@@ -11,7 +11,7 @@ English | [简体中文](./README.ZH-CN.md)
 
 ## Features
 - :v: Automatically deal with the JavaScript decimal precision problem by [bignumber.js](https://github.com/MikeMcl/bignumber.js), and supports big number
-- :rocket: Fast and tiny, only 28.7 KB minified and 11.2 KB gzipped (pure only 10.5 KB minified and 3.3 KB gzipped without bignumber.js)
+- :rocket: Fast and tiny, only 28.7 KB minified and 11.2 KB gzipped (pure only 10.5 KB minified and 3.3 KB gzipped without `bignumber.js`)
 - :writing_hand: Easy to extend custom operator
 - :vulcan_salute: Supports expression scope variables
 
