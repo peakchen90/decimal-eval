@@ -1,7 +1,7 @@
 {
   "name": "decimal-eval",
   "description": "A tiny, safe, fast JavaScript library for decimal arithmetic expressions.",
-  "version": "0.1.0",
+  "version": "0.1.1-beta.0",
   "main": "index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -81,7 +81,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.14.0",
-    "big.js": "^6.1.1"
+    "bignumber.js": "^9.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.14.3",
@@ -96,7 +96,6 @@
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@rollup/plugin-replace": "^2.4.2",
     "@rollup/plugin-typescript": "^8.2.1",
-    "@types/big.js": "^6.0.2",
     "@types/jest": "^26.0.23",
     "@typescript-eslint/eslint-plugin": "^4.24.0",
     "@typescript-eslint/parser": "^4.24.0",

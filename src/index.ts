@@ -1,4 +1,4 @@
-import Big from 'big.js';
+import BigNumber from 'bignumber.js';
 import DecimalEval, {Parser} from './pure';
 import {IAdapter} from './transform';
 
@@ -7,16 +7,16 @@ import {IAdapter} from './transform';
  */
 const bigJSAdapter: Readonly<IAdapter> = {
   '+': (left, right) => {
-    return new Big(left).plus(right).toString();
+    return new BigNumber(left).plus(right).toString();
   },
   '-': (left, right) => {
-    return new Big(left).minus(right).toString();
+    return new BigNumber(left).minus(right).toString();
   },
   '*': (left, right) => {
-    return new Big(left).times(right).toString();
+    return new BigNumber(left).times(right).toString();
   },
   '/': (left, right) => {
-    return new Big(left).div(right).toString();
+    return new BigNumber(left).div(right).toString();
   }
 };
 
@@ -26,5 +26,5 @@ Parser.useAdapter(bigJSAdapter);
 export default DecimalEval;
 export * from './pure';
 export {
-  Big
+  BigNumber
 };

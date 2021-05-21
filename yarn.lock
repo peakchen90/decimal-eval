@@ -1354,11 +1354,6 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
-"@types/big.js@^6.0.2":
-  version "6.0.2"
-  resolved "https://registry.nlark.com/@types/big.js/download/@types/big.js-6.0.2.tgz#a86938c1bb4511e69d91f69823cacc3f48ff1fa3"
-  integrity sha1-qGk4wbtFEeadkfaYI8rMP0j/H6M=
-
 "@types/estree@*":
   version "0.0.47"
   resolved "https://registry.nlark.com/@types/estree/download/@types/estree-0.0.47.tgz?cache=0&sync_timestamp=1621240967551&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40types%2Festree%2Fdownload%2F%40types%2Festree-0.0.47.tgz#d7a51db20f0650efec24cd04994f523d93172ed4"
@@ -1831,10 +1826,10 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
-big.js@^6.1.1:
-  version "6.1.1"
-  resolved "https://registry.nlark.com/big.js/download/big.js-6.1.1.tgz?cache=0&sync_timestamp=1620132748267&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fbig.js%2Fdownload%2Fbig.js-6.1.1.tgz#63b35b19dc9775c94991ee5db7694880655d5537"
-  integrity sha1-Y7NbGdyXdclJke5dt2lIgGVdVTc=
+bignumber.js@^9.0.1:
+  version "9.0.1"
+  resolved "https://registry.npm.taobao.org/bignumber.js/download/bignumber.js-9.0.1.tgz#8d7ba124c882bfd8e43260c67475518d0689e4e5"
+  integrity sha1-jXuhJMiCv9jkMmDGdHVRjQaJ5OU=
 
 bl@^4.1.0:
   version "4.1.0"
