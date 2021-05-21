@@ -11,8 +11,8 @@
 
 
 ## 特性
-- :v: 使用 [big.js](https://github.com/MikeMcl/big.js) 自动处理 JavaScript 小数精度，并支持大整数
-- :rocket: 执行快、体积小，压缩后只有 17.2 KB, GZIP 后仅 5.9 KB
+- :v: 使用 [bignumber.js](https://github.com/MikeMcl/bignumber.js) 自动处理 JavaScript 小数精度，并支持大整数
+- :rocket: 执行快、体积小，压缩后只有 17.2 KB, GZIP 后仅 5.9 KB (无 bignumber.js 依赖版本压缩后只有 10.5 KB, GZIP 后仅 3.3 KB)
 - :writing_hand: 非常容易扩展自己的自定义运算符
 - :vulcan_salute: 支持表达式变量占位符
 
@@ -29,7 +29,7 @@ yarn add decimal-eval
 ```
 
 ### 使用
-支持基本的四则运算 (`+`, `-`, `*`, `/`), 并默认使用 [big.js](https://github.com/MikeMcl/big.js) 自动处理 JavaScript 小数精度，并支持大整数
+支持基本的四则运算 (`+`, `-`, `*`, `/`), 并默认使用 [bignumber.js](https://github.com/MikeMcl/bignumber.js) 自动处理 JavaScript 小数精度，并支持大整数
 
 ```js
 import {evaluate} from 'decimal-eval';
@@ -105,7 +105,7 @@ evaluate({ def: 1 }); // 抛出错误，字段名 `abc` 未初始化
 安装一个运算符，运算符通过 `Parser.createBinaryOperator()` 或 `Parser.createUnaryOperator()` 方法创建
 
 #### Parser.useAdapter(adapter)
-为四则运算 (`+`, `-`, `*`, `/`) 设置计算方法适配器，默认使用 [big.js](https://github.com/MikeMcl/big.js) 计算
+为四则运算 (`+`, `-`, `*`, `/`) 设置计算方法适配器，默认使用 [bignumber.js](https://github.com/MikeMcl/bignumber.js) 计算
 
 ```js
 Parser.useAdapter({
@@ -120,7 +120,7 @@ Parser.useAdapter({
 ## 进阶
 
 ### 使用 Pure 包 (无依赖)
-当需要使用自定义方法去处理小数精度问题时，你可以使用 Pure 包，可以减少 60% 的体积，这个包不包含 `big.js`
+当需要使用自定义方法去处理小数精度问题时，你可以使用 Pure 包，可以减少 60% 的体积，这个包不包含 `bignumber.js`
 
 ```js
 import {evaluate, Parser} from 'decimal-eval/dist/pure';
@@ -135,12 +135,12 @@ evaluate('0.1 + 0.2'); // '0.30000000000000004'
 evaluate('9007199254740992 + 1'); // '9007199254740992'
 ```
 
-### 导出 `big.js`
-[Big.js](https://github.com/MikeMcl/big.js) 对处理 JavaScript 小数精度问题很有用，而不用重复安装
+### 导出 `bignumber.js`
+[bignumber.js](https://github.com/MikeMcl/bignumber.js) 对处理 JavaScript 小数精度问题很有用，而不用重复安装
 
 ```js
-import {Big} from 'decimal-eval';
-const val = new Big(0.1).plus(0.2);
+import {BigNumber} from 'decimal-eval';
+const val = new BigNumber(0.1).plus(0.2);
 console.log(String(val)); // '0.3'
 ```
 

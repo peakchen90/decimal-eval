@@ -10,8 +10,8 @@ A tiny, safe, fast JavaScript library for decimal arithmetic expressions.
 English | [简体中文](./README.ZH-CN.md)
 
 ## Features
-- :v: Automatically deal with the JavaScript decimal precision problem by [big.js](https://github.com/MikeMcl/big.js), and supports big number
-- :rocket: Fast and tiny, only 17.2 KB minified and 5.9 KB gzipped
+- :v: Automatically deal with the JavaScript decimal precision problem by [bignumber.js](https://github.com/MikeMcl/bignumber.js), and supports big number
+- :rocket: Fast and tiny, only 28.7 KB minified and 11.2 KB gzipped (pure only 10.5 KB minified and 3.3 KB gzipped without bignumber.js)
 - :writing_hand: Easy to extend custom operator
 - :vulcan_salute: Supports expression scope variables
 
@@ -29,7 +29,7 @@ yarn add decimal-eval
 
 ### Usage
 Supports the four arithmetic operations (`+`, `-`, `*`, `/`),
-and automatically deal with JavaScript decimal precision by [big.js](https://github.com/MikeMcl/big.js), and supports big number.
+and automatically deal with JavaScript decimal precision by [bignumber.js](https://github.com/MikeMcl/bignumber.js), and supports big number.
 
 ```js
 import {evaluate} from 'decimal-eval';
@@ -113,7 +113,7 @@ Install an operator which created by the `Parser.createBinaryOperator()` or `Par
 
 #### Parser.useAdapter(adapter)
 Set custom calculation adapter methods for four arithmetic (`+`, `-`, `*`, `/`).
-[Big.js](https://github.com/MikeMcl/big.js) is used by default.
+[bignumber.js](https://github.com/MikeMcl/bignumber.js) is used by default.
 
 ```js
 Parser.useAdapter({
@@ -129,7 +129,7 @@ Parser.useAdapter({
 
 ### Use pure package (no dependencies)
 When using a custom method to deal with the decimal precision problem, you can use a pure package, which can reduce the size by about 60%.
-It doesn't include `big.js`.
+It doesn't include `bignumber.js`.
 
 ```js
 import {evaluate, Parser} from 'decimal-eval/dist/pure';
@@ -144,12 +144,12 @@ evaluate('0.1 + 0.2'); // '0.30000000000000004'
 evaluate('9007199254740992 + 1'); // '9007199254740992'
 ```
 
-### Re-export `big.js`
-Useful for deal JavaScript decimal precision problem without having to install [big.js](https://github.com/MikeMcl/big.js) again.
+### Re-export `bignumber.js`
+Useful for deal JavaScript decimal precision problem without having to install [bignumber.js](https://github.com/MikeMcl/bignumber.js) again.
 
 ```js
-import {Big} from 'decimal-eval';
-const val = new Big(0.1).plus(0.2);
+import {BigNumber} from 'decimal-eval';
+const val = new BigNumber(0.1).plus(0.2);
 console.log(String(val)); // '0.3'
 ```
 
