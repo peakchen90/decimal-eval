@@ -12,7 +12,7 @@
 
 ## 特性
 - :v: 使用 [bignumber.js](https://github.com/MikeMcl/bignumber.js) 自动处理 JavaScript 小数精度，并支持大整数
-- :rocket: 执行快、体积小，压缩后只有 17.2 KB, GZIP 后仅 5.9 KB (无 `bignumber.js` 依赖版本压缩后只有 10.5 KB, GZIP 后仅 3.3 KB)
+- :rocket: 执行快、体积小，压缩后只有 28.7 KB, GZIP 后仅 11.2 KB (无 `bignumber.js` 依赖版本压缩后只有 10.5 KB, GZIP 后仅 3.3 KB)
 - :writing_hand: 非常容易扩展自己的自定义运算符
 - :vulcan_salute: 支持表达式变量占位符
 
