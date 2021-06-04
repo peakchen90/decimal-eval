@@ -154,7 +154,7 @@ console.log(String(val)); // '0.3'
 ```
 
 ### Precedence of built-in operators
-The operator precedence according to: [MDN operator precedence](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence).
+The operator precedence according to: [MDN operator precedence](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#table).
 
 |  operator   | precedence |
 |  --------   | ---------- |
