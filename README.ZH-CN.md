@@ -47,7 +47,7 @@ import {evaluate, Parser} from 'decimal-eval';
 
 // 创建一个二元运算符 "add", 优先级是 13
 const addOp = Parser.createBinaryOperator('add', 13, (left, right) => {
-  return String(Number(left) + Number(left));
+  return String(Number(left) + Number(right));
 });
 
 // 创建一个一元运算符 "sin", 优先级是 16

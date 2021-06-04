@@ -49,7 +49,7 @@ import {evaluate, Parser} from 'decimal-eval';
 
 // create binary operator `add`, the precedence is 13
 const addOp = Parser.createBinaryOperator('add', 13, (left, right) => {
-  return String(Number(left) + Number(left));
+  return String(Number(left) + Number(right));
 });
 
 // create unary operator `sin`, the precedence is 16
