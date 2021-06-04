@@ -42,7 +42,7 @@ evaluate('1 + abc', { abc: 2 }); // '3'
 
 In addition to the above operators, it also supports custom operator expansion,
 and supports unary operators and binary operators.
-The operator precedence according to: [MDN operator precedence](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence).
+See also [reference document](#toc-built-in-operators-precedence) for the precedence of built-in operators.
 
 ```js
 import {evaluate, Parser} from 'decimal-eval';
@@ -153,8 +153,7 @@ const val = new BigNumber(0.1).plus(0.2);
 console.log(String(val)); // '0.3'
 ```
 
-### Precedence of built-in operators
-The operator precedence according to: [MDN operator precedence](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#table).
+### <span id="toc-built-in-operators-precedence">Precedence of built-in operators</span>
 
 |  operator   | precedence |
 |  --------   | ---------- |

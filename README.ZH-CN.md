@@ -40,8 +40,7 @@ evaluate('9007199254740992 + 1'); // '9007199254740993'
 evaluate('1 + abc', { abc: 2 }); // '3'
 ```
 
-除了上述基本的运算符，也支持扩展自定义运算符，包括一元运算符和二元运算符。运算符的优先级根据:
-[MDN 运算符优先级](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence).
+除了上述基本的运算符，也支持扩展自定义运算符，包括一元运算符和二元运算符。内置运算符的优先级另见[参考文档](#toc-built-in-operators-precedence)。
 
 ```js
 import {evaluate, Parser} from 'decimal-eval';
@@ -144,8 +143,7 @@ const val = new BigNumber(0.1).plus(0.2);
 console.log(String(val)); // '0.3'
 ```
 
-### 内置运算符优先级
-运算符优先级根据: [MDN 运算符优先级](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence#table).
+### <span id="toc-built-in-operators-precedence">内置运算符优先级参考</span>
 
 |  运算符      | 优先级      |
 |  --------   | ---------- |
