@@ -1,0 +1,7 @@
+Benchmark test results (Auto generated):
+Run times: 10000
+
+Cases:
+simple: 46.316778004169464ms
+complex: 112.17674799263477ms
+withScope: 26.48633900284767ms

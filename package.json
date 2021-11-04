@@ -12,7 +12,8 @@
     "test": "jest",
     "dts": "node scripts/dts.js",
     "size": "node scripts/size.js",
-    "lint": "eslint {src,test}/**/*.ts --fix"
+    "lint": "eslint {src,test}/**/*.ts --fix",
+    "benchmark": "node ./benchmark"
   },
   "keywords": [
     "eval",
