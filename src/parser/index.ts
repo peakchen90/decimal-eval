@@ -74,7 +74,7 @@ export default class Parser {
       return this.node = null; // 空字符
     }
 
-    node.expression = this.parseExpression();
+    node.expression = this.parseExprAtom(this.start, -1);
     if (this.tokenType !== tt.end) { // 其后遇到其他非法字符
       this.unexpected(this.value);
     }
@@ -82,14 +82,7 @@ export default class Parser {
   }
 
   /**
-   * 解析表达式
-   */
-  parseExpression(): Node {
-    return this.parseExprAtom(this.start, -1);
-  }
-
-  /**
-   * 解析一个表达式原子, 如: `1 + 2`、`(1 + 2 + 3)`、`1` 都作为一个表达式原子解析
+   * 解析一个表达式原子（最小单元的表达式）, 如: `1 + 2`、`(1 + 2 + 3)`、`-1` 都作为一个表达式原子解析
    * @param leftStartPos 左侧开始位置
    * @param minPrecedence 当前上下文的优先级
    */
@@ -98,20 +91,20 @@ export default class Parser {
       this.next();
       const left = this.parseExprAtom(this.start, -1);
       this.expect(tt.parenR);
-      return this.parseExprOp(left, leftStartPos, minPrecedence); // 将 `(expr)` 整体作为左值，进入优先级解析流程
+      return this.parseMaybeBinary(left, leftStartPos, minPrecedence); // 将 `(expr)` 整体作为左值，进入优先级解析流程
     } else {
       const left = this.parseMaybeUnary(minPrecedence);
-      return this.parseExprOp(left, leftStartPos, minPrecedence); // 读取一个数字作为左值，进入优先级解析流程
+      return this.parseMaybeBinary(left, leftStartPos, minPrecedence); // 读取一个数字作为左值，进入优先级解析流程
     }
   }
 
   /**
-   * 解析二元表达式优先级
+   * 解析可能的二元表达式
    * @param left 左值
    * @param leftStartPos 左值节点起始位置
    * @param minPrecedence 当前上下文的优先级
    */
-  parseExprOp(
+  parseMaybeBinary(
     left: Node,
     leftStartPos: number,
     minPrecedence: number
@@ -125,7 +118,7 @@ export default class Parser {
       // 解析可能更高优先级的右侧表达式，如: `1 + 2 * 3` 将解析 `2 * 3` 作为右值
       const start = this.start;
       const maybeHighPrecedenceExpr = this.parseExprAtom(start, precedence);
-      const right = this.parseExprOp(maybeHighPrecedenceExpr, start, precedence);
+      const right = this.parseMaybeBinary(maybeHighPrecedenceExpr, start, precedence);
       node.left = left;
       node.operator = operator;
       node.right = right;
@@ -133,7 +126,7 @@ export default class Parser {
 
       // 将已经解析的二元表达式作为左值，然后递归解析后面可能的同等优先级或低优先级的表达式作为右值
       // 如: `1 + 2 + 3`, 当前已经解析 `1 + 2`, 然后将该节点作为左值递归解析表达式优先级
-      return this.parseExprOp(node, leftStartPos, minPrecedence);
+      return this.parseMaybeBinary(node, leftStartPos, minPrecedence);
     }
     return left;
   }
